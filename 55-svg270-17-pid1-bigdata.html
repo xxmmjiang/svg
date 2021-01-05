@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li{
+		margin-bottom: 20px;
+		cursor: pointer;
+	}
+	
+	
+	
+</style>
+
+<body>
+	
+	<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
+	<div id="drawing" style="float:left;">
+
+	</div>
+	
+
+</body>
+
+<script>
+
+// 这里是整个视窗和最外层的<svg>是一致的
+var drawimgWidth = 1000;
+var drawingHeight = 600;
+$("#drawing").css({
+	
+	border: "2px solid rosybrown",
+	width: drawimgWidth + "px",
+	height: drawingHeight + "px",
+});
+
+
+
+var draw = SVG('drawing').size("100%", "100%")
+// pan and zoom
+draw.panZoom({ zoomMin: 0.01, zoomMax: 100 });
+
+
+
+
+var url = "./svg270/legend/sb1.svg";
+
+loadLegendByUrl(url,function(text){
+	
+	for(var i=0;i<1000;i++){
+		draw.svg(text);
+		var g = SVG.get("layer1").attr("id",createUUID());
+		var x = Math.floor(Math.random()*400);
+		var y = Math.floor(Math.random()*400);
+		g.translate(x,y);
+		g.draggable();
+		//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度提高，这样看着和没底色差不多。
+		g.attr("fill","none").attr("fill-opacity",0.5).attr("stroke",getRandomColor());
+
+	}
+	
+})
+
+	
+
+
+
+
+
+/**
+ * 加载图例
+ */
+function loadLegendByUrl(url,callback){
+
+
+	$.post(url, {}, function (data) {	
+
+		if($.isFunction(callback)){
+			callback(data);
+		}
+	}, "text");
+}
+
+function createUUID(){
+	var x= 13*Math.floor(Math.random()*1000)+"-"+7*Math.floor(Math.random()*100);  
+	return "id_"+x;
+}
+/**
+ * 生成随机颜色
+ */
+function getRandomColor(){
+	var x= Math.floor(Math.random()*9)+""+Math.floor(Math.random()*9)+""+Math.floor(Math.random()*9);  
+	return "#"+x;
+}
+</script>
+
+</html>

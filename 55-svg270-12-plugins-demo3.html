@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+	
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+
+	<script src="svg270/svg.min.js"></script>
+	
+	<script src="svg270/svg.panzoom.min.js"></script>
+	<script src="svg270/svg.draggable.min.js"></script>
+
+	
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+	
+</head>
+<body>
+	<a>我是一个视窗</a>
+	<div id="drawing" style="border:2px solid rosybrown;width: 800px;height: 600px;" ></div>
+
+
+</body>
+
+<script >
+
+// pan and zoom
+var draw = SVG('drawing').size("800", "600").panZoom({zoomMin: 0.01, zoomMax: 100});;
+
+
+var t=200;
+for(var i=0;i<t;i++ ){
+	var x= Math.floor(Math.random()*200)+50;    // 可均衡获取 0 到 200 的随机整数。;
+	var y = Math.floor(Math.random()*200)+50;
+	console.log(x+"]["+y);
+	console.log(i);
+	
+	
+	// var ajax = new XMLHttpRequest() ;
+	// ajax.open('GET', './svg270/2.svg', true) 
+	// ajax.send() 
+	// ajax.onload = function(e) { 
+	// 	console.log(ajax.responseText);
+	// 	var a = draw.svg(ajax.responseText);
+	// 	//a.move(x,y);
+	// 	console.log(a);
+	// } 
+	
+	$.post("./svg270/2.svg",{},function(data){
+		console.log(data);
+		draw.svg(data);
+	},"text");
+	
+
+
+}
+	
+
+
+
+
+
+</script>
+</html>

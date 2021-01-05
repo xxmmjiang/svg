@@ -1,0 +1,21 @@
+<g 
+stroke="#000000"
+   stroke-width="3"
+   fill="none"
+   fill-opacity="1"
+     id="layer1">
+    <rect
+       style="stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.99435"
+       id="rect3817"
+       width="151.85049"
+       height="103.89932"
+       x="2.7642951"
+       y="31.279461" />
+    <path
+       sodipodi:type="arc"
+       style="stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.985437"
+       id="path3823"
+       d="M 154.62429,-30.621651 A 75.93895,26.992748 0 0 1 116.44065,-7.201459 75.93895,26.992748 0 0 1 40.288746,-7.3335588 75.93895,26.992748 0 0 1 2.7500084,-30.885105 l 75.9353326,0.263454 z"
+       transform="scale(1,-1)"
+ />
+  </g>

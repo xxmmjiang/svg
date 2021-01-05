@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li{
+		margin-bottom: 20px;
+		cursor: pointer;
+	}
+	
+	
+	
+</style>
+
+<body>
+	<div style="float:left;margin-right: 50px;">
+		<a>底图透明度：</a><div id="id_image_opacity" style="width:200px"></div>
+		<a id="id_btn_zoom" href="#">归位</a> 
+		<a id="id_btn_panZoomFalse" href="#" value="0">禁用平移画布</a> <br />
+		<a>图例放大：</a><div id="id_btn_scaleBig" style="width:200px"></div>
+		<a>图例缩小：</a><div id="id_btn_scaleSmall" style="width:200px"></div>
+		<a id="id_btn_clearAllSelected" href="#">清除选择</a> 
+		<a id="id_btn_lockBackgroundImage" href="#" value="0">锁定底图</a> 
+	</div>
+	
+	<div style="float:left;">
+		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
+		<div id="drawing" style="float:left;border:2px solid green;width: 600px;height: 400px;">
+			
+		</div>
+	</div>
+	
+	<div style="float: left;margin-left: 10px;">
+			<a href="#">我是图例库</a>
+			<div style="width:100px;height:500px;border:1px solid green;">
+				<ul id="legend-list">
+					<li value="0" draggable="true">设备1</li>
+					<li value="1" draggable="true">设备2</li>
+					<li value="2" draggable="true">仪表</li>
+					<li value="3" draggable="true">阀门</li>
+					<li value="4" draggable="true">设备1-备注</li>
+					<li value="5" draggable="true">管线</li>
+				</ul>
+			</div>
+	</div>
+
+	<!-- 通用图例的右键菜单-->
+	<div id="mm" class="easyui-menu" style="width:120px;">   
+		<div data-options="iconCls:'icon-add'">放大</div>   
+		<div data-options="iconCls:'icon-save'">缩小</div>   
+		<div data-options="iconCls:'icon-search'">旋转</div>    
+	</div> 
+	<!-- 管线图例右键菜单-->
+	<div id="id_mm_pipeline_rightMenu" class="easyui-menu" style="width:120px;">   
+		<div>结束绘制</div>
+	</div>
+</body>
+
+<script>
+
+//全局键盘事件
+$(document).on("keyup",function(e){
+
+	//删除选中的对象
+	if(46==e.keyCode){
+		
+		var els = draw.select(".selectedObject");
+		if(els.members.length<=0){
+			return;
+		}
+		for(var i in els.members){
+			els.members[i].remove();
+		}
+	}
+})
+
+
+var draw = SVG('drawing').size("100%", "100%")
+// pan and zoom
+draw.panZoom({ zoomMin: 0.01, zoomMax: 100 });
+
+
+var defaultZoom = draw.zoom();
+
+/**
+ * 绑定右击事件
+ */ 
+draw.on("contextmenu",function(e){
+	e.preventDefault();
+
+});
+
+/**
+ * 整个画布的点击事件
+ */ 
+draw.click(function(e){
+	var x = e.offsetX;
+	var y = e.offsetY;
+
+	drawingPipeline(x,y);
+	
+})
+
+//这是最低层，用于将画布扩展为无限区域
+// var lowestLayer = draw.group();
+// lowestLayer.rect(99999,99999).fill("#EEF253");
+
+
+//这是底图的测试图片
+var imageWidth = 800;
+var imageHeight = 600;
+var image = draw.image('svg270/images/drawing.jpg', imageWidth, imageHeight);
+
+
+var imgArea = draw.group().style({ fill: '#fff' }).style("fill-opacity", 0.3);
+imgArea.add(image);
+//灰度调整区域
+imgArea.rect(imageWidth, imageHeight);
+
+
+
+
+btn();
+
+loadAllLegends();
+
+/**
+ * 绘制管线
+ */ 
+function drawingPipeline(x,y){
+	console.log(x+"--"+y)
+	/**
+	 * 画管线的逻辑
+	 */ 
+	 if(!currentDrawingPipeline){
+		return;
+	}
+	var lines = currentDrawingPipeline.select("line.uncomplete");
+	// console.log(els.length());
+	if(lines.members.length<=0){
+		return;
+	}
+	var line = lines.members[0];
+	var x1 = line.attr("x1");
+	var y1 = line.attr("y1");
+	var t = Math.abs(y-y1)>Math.abs(x-x1);
+	// console.log(t);
+	if(t){ //y的距离大于x，说明是垂直线
+		line.attr({x2:x1,y2:y});
+	}else{//反之，说明是水平线
+		line.attr({x2:x,y2:y1});
+	}
+	
+	line.removeClass("uncomplete");
+
+	var x2 = line.attr("x2");
+	var y2 = line.attr("y2");
+	var newline = line.clone().plot(x2,y2,x2,y2).addClass("uncomplete");
+	currentDrawingPipeline.add(newline);
+	
+	//处理箭头方向和位置
+	var arrow = currentDrawingPipeline.select("image").members[0].move(x2,y2);
+
+	if(t){//垂直线
+		if(y>y1){
+			arrow.load("svg270/images/D.png")
+		}else{
+			arrow.load("svg270/images/U.png")
+		}
+		
+	}else{//水平线
+		if(x>=x1){
+			arrow.load("svg270/images/R.png")
+		}else{
+			arrow.load("svg270/images/L.png")
+		}
+	}
+}
+
+
+function btn() {
+
+	//底图透明度按钮
+	$('#id_image_opacity').slider({
+		mode: 'h', //声明滚动条类型。可用值有：'h'(水平)、'v'(垂直)。   
+		min: 0,
+		max: 1,
+		step: 0.01,
+		value:0.3,
+		tipFormatter: function (value) {
+			return value + '%';
+		},
+		onChange: function (newValue, oldValue) {
+			imgArea.style("fill-opacity", newValue);
+
+			// var elements = draw.select('.lengendObject');
+			// elements.transform("scale",newValue*10);
+			
+		}
+
+	});
+	//图例放大按钮
+	$('#id_btn_scaleBig').slider({
+		mode: 'h', //声明滚动条类型。可用值有：'h'(水平)、'v'(垂直)。   
+		min: 1,
+		max: 100,
+		step: 1,
+		value:1,
+		tipFormatter: function (value) {
+			return value + '倍';
+		},
+		onChange: function (newValue, oldValue) {
+			
+			var selectedObjects = draw.select(".selectedObject");
+			selectedObjects.scale(newValue);
+			
+			
+			// console.log(newValue);
+		}
+
+	});
+	//
+	//图例缩小按钮
+	$('#id_btn_scaleSmall').slider({
+		mode: 'h', //声明滚动条类型。可用值有：'h'(水平)、'v'(垂直)。   
+		min: 0.01,
+		max: 1,
+		step: 0.01,
+		value:1,
+		tipFormatter: function (value) {
+			return value + '倍';
+		},
+		onChange: function (newValue, oldValue) {
+			
+			var selectedObjects = draw.select(".selectedObject");
+			selectedObjects.scale(newValue);
+			
+			
+			// console.log(newValue);
+		}
+
+	});
+
+	//zoom 
+	$("#id_btn_zoom").linkbutton({
+		
+		onClick:function(){
+			draw.zoom(defaultZoom);
+		}
+	})
+	
+	//禁止或开启【平移画布】
+	$("#id_btn_panZoomFalse").linkbutton({
+		
+		onClick:function(){
+			var v = $("#id_btn_panZoomFalse").attr("value");
+			if(v==0){
+				draw.panZoom(false);
+				$("#id_btn_panZoomFalse").attr("value",1).linkbutton({
+					text:'启用平移画布'
+				});
+			}else{
+				draw.panZoom(true);
+				$("#id_btn_panZoomFalse").attr("value",0).linkbutton({
+					text:'禁用平移画布'
+				});
+			}
+		}
+	})
+	
+	//清除选择
+	$("#id_btn_clearAllSelected").linkbutton({
+		
+		onClick:function(){
+			unselectAllGroup();
+		}
+	})
+
+	//初始化右键菜单的事件
+	$('#mm').menu({    
+		onClick:function(item){    
+			//...    
+			console.log(item.text);
+			if('放大'==item.text){
+				var transform = draw.select('.selectedObject').members[0].transform();
+				// console.log(transform);
+				draw.select('.selectedObject').scale(transform.scaleX*2,transform.scaleY*2);
+			
+
+			}else if('缩小'==item.text){
+				var transform = draw.select('.selectedObject').members[0].transform();
+				// console.log(transform);
+				draw.select('.selectedObject').scale(transform.scaleX/2,transform.scaleY/2);
+			}else if('旋转'==item.text){
+
+				// draw.select('.selectedObject').rotate(90);
+				var transform = draw.select('.selectedObject').members[0].transform();
+				// console.log(transform);
+				draw.select('.selectedObject').rotate(transform.rotation+90);
+			}
+		}    
+	});
+	
+	//锁定底图
+	$("#id_btn_lockBackgroundImage").linkbutton({
+		onClick:function(){
+			var v = $("#id_btn_lockBackgroundImage").attr("value");
+			if(v==0){
+				imgArea.draggable();
+				$("#id_btn_lockBackgroundImage").attr("value",1).linkbutton({
+					text:'解锁底图'
+				});
+			}else{
+				imgArea.draggable(false);
+				$("#id_btn_lockBackgroundImage").attr("value",0).linkbutton({
+					text:'锁定底图'
+				});
+			}
+		}
+	})
+
+	
+	//初始化右键菜单的事件
+	$('#id_mm_pipeline_rightMenu').menu({    
+		onClick:function(item){    
+			//...    
+			// console.log(item.text);
+			if('结束绘制'==item.text){
+				//终止画管线
+				currentDrawingPipeline= null;
+
+			}
+		}    
+	});
+
+}
+
+var currentDragLegendText = null;
+var highColor = "#1470FA";
+var defaultColor = "#000";
+
+/**
+ * 是否为单选
+ */
+var isSingleSelected = true;
+
+/**
+ * 正在画管线
+ */ 
+var currentDrawingPipeline = null;
+/**
+ * 加载图例
+ */
+function loadAllLegends(){
+	var arr = ["sb1","sb2","yb","fm","sb1-note","pl"];
+
+	$("#legend-list li").each(function(){
+
+		var _this = this;
+		var v = $(this).attr("value");
+		if(v=="#"){
+			return;
+		}
+
+
+		var url = "./svg270/legend/"+arr[parseInt(v)]+".svg";
+
+		loadLegendByUrl(url,function(text){
+			// console.log(text);
+			$(_this).data("svgData",text);
+		})
+		
+		//点击右侧的图例列表
+		$(this).click(function(){
+			// var v= $(_this).data("svgData");
+			// console.log(v);
+		})
+		//拖拽时，离开容器范围时触发
+		$(this).on("dragstart",function(e){
+			var v= $(_this).data("svgData");
+			currentDragLegendText = v;
+		}).on("dragover",function(e){
+			return false;
+		})
+		
+	})
+
+	//放置图例时的触发事件
+	$("#drawing").on("drop",function(e){
+	//自定义拖拽函数
+	// draw.on("drop",function(e){
+		var x = e.offsetX;
+		var y = e.offsetY;
+		// console.log(x+"---"+y);
+
+		// console.log(currentDragLegendText);
+		if(!currentDragLegendText){
+			return;
+		}
+		// console.log(currentDragLegendText);
+		draw.svg(currentDragLegendText);
+		var a = SVG.get("layer1").attr("id",createUUID());
+		
+		bindNewLegend(a,x,y);
+
+		tip("delte键删除选中对象")
+	}).on("dragover",function(e){
+		return false;
+	})
+	
+	
+}
+
+/**
+ * 为新的图例绑定事件
+ */ 
+function bindNewLegend(g,x,y){
+	
+
+	g.translate(0,0);
+		// a.translate(x,y);
+
+	//记录血的教训：必须指定 fill 颜色;不然 fill=none 时 ，移动时必须选中边框才能移动
+	g.draggable();
+	//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度变为0，这样看着和没底色差不多。
+	g.attr("fill","#fff").attr("fill-opacity",0);
+
+	//加入统一的定位信息
+	g.addClass("lengendObject");	
+	
+	//左键单击
+	g.click(function(){
+		
+		selectG(this);
+		
+	});
+	//右击单击
+	g.on("contextmenu",function(e){
+		e.preventDefault();
+		selectG(this);
+		
+		if(currentDrawingPipeline){
+			//显示菜单
+			$('#id_mm_pipeline_rightMenu').menu('show', {    
+				left: e.clientX,    
+				top: e.clientY    
+			});
+		}else{
+			//显示菜单
+			$('#mm').menu('show', {    
+				left: e.clientX,    
+				top: e.clientY    
+			});
+		}
+		
+	})
+
+
+	if("pl"===g.attr("legendtype")){
+		var line = g.children();
+		line[0].plot(x, y, x, y);
+		currentDrawingPipeline = g;
+		g.select("image").move(x,y);
+
+		//提示信息
+		tip("左键点击绘制管线，右击结束绘制。");
+	}else{
+
+		//默认选中
+		selectG(g);
+
+		//停止绘制管线
+		currentDrawingPipeline = null;
+	}
+}
+/**
+ * 选中
+ */
+function selectG(group){
+	var gorupId = group.attr("id");
+	if(isSingleSelected){
+
+		unselectAllGroup();
+		
+		group.attr("stroke",highColor);
+		
+	}
+	//
+	group.addClass("selectedObject");
+
+	//加入选择的插件
+	// group.selectize();
+	//加入变形的 插件
+	// group.resize();
+
+
+}
+
+/**
+ * 提示信息
+ */ 
+function tip(msg){
+	$.messager.show({
+		title:'我的消息',
+		msg:msg,
+		timeout:5000,
+		showType:'slide'
+	});
+
+}
+/**
+ * 取消高亮
+ */ 
+function unselectAllGroup(){
+
+	var elements = draw.select('.lengendObject').attr("stroke",defaultColor).removeClass("selectedObject");
+		elements.selectize(false);
+		return elements.resize('stop');
+
+}
+
+/**
+ * 加载图例
+ */
+function loadLegendByUrl(url,callback){
+
+
+	$.post(url, {}, function (data) {	
+
+		if($.isFunction(callback)){
+			callback(data);
+		}
+	}, "text");
+}
+
+function createUUID(){
+	var x= 13*Math.floor(Math.random()*1000)+"-"+7*Math.floor(Math.random()*100);  
+	return "id_"+x;
+}
+/**
+ * 生成随机颜色
+ */
+function getRandomColor(){
+	var x= Math.floor(Math.random()*9)+""+Math.floor(Math.random()*9)+""+Math.floor(Math.random()*9);  
+	return "#"+x;
+}
+</script>
+
+</html>

@@ -1,0 +1,28 @@
+
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+
+    <rect
+       style="stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:0.99435024000000005;stroke-dasharray:none"
+       id="rect3817"
+       width="100.27007"
+       height="81.053947"
+       x="3.4392579"
+       y="970.40253" />
+    <path
+       sodipodi:type="arc"
+       style="stroke:#000000;stroke-width:7.70357675;stroke-miterlimit:4;stroke-opacity:0.98543689000000001;stroke-dasharray:none"
+       id="path3823"
+       sodipodi:cx="362.64478"
+       sodipodi:cy="125.04214"
+       sodipodi:rx="348.50262"
+       sodipodi:ry="179.80714"
+       d="M 711.1474,125.04214 A 348.50262,179.80714 0 1 1 14.158751,123.28718"
+       sodipodi:start="0"
+       sodipodi:end="3.151353"
+       transform="matrix(0.14388436,0,0,-0.11711205,1.3926094,984.53331)"
+       sodipodi:open="true" />
+  </g>
+

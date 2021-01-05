@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+	<!--
+	<link rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../demo.css">
+	<script type="text/javascript" src="../../jquery.min.js"></script>
+	<script type="text/javascript" src="../../jquery.easyui.min.js"></script>
+	-->
+	<script src="svg270/svg.min.js"></script>
+	<!-- 
+	<script src="svg270/svg.draggable.min.js"></script>
+	<script src="svg270/svg.resize.min.js"></script>
+	
+	<script src="svg270/svg.select.min.css"></script>
+	<script src="svg270/svg.select.min.js"></script>
+	-->
+</head>
+<body>
+	<div id="drawing"></div>
+
+
+</body>
+
+<script >
+	var draw = SVG('drawing').size(800, 800)
+	var rect = draw.rect(100, 100).attr({ fill: '#f06' });
+
+	var symbol = draw.symbol()
+	symbol.rect(100, 100).fill('#f09');
+	var use  = draw.use(symbol).move(200, 200);
+
+	var link = draw.link('http://svgdotjs.github.io/').attr({title:"http://svgdotjs.github.io/jiangxu"});
+	var rect = link.rect(100, 100).fill('#f09').move(100, 100);
+	
+
+	var gradient = draw.gradient('linear', function(stop) {
+		stop.at(0, '#333')
+		stop.at(1, '#fff')
+	})
+	rect.attr({ fill: gradient });
+
+
+	rect.radius(10);
+	rect.radius(10, 20);
+
+
+	var ellipse = draw.ellipse(200, 100).move(200,0);
+	var circle = draw.circle(100).fill(gradient).move(200,100);
+	var line = draw.line(0, 0, 100, 150).stroke({ width: 10 });
+
+
+	var text = draw.text("Lorem ipsum dolor sit amet consectetur.\nCras sodales imperdiet auctor.").move(100,200);
+
+	var text = draw.text(function(add) {
+		add.tspan('We go ')
+		add.tspan('up').fill('#f09').dy(-40)
+		add.tspan(', then we go down, then up again').dy(40)
+	})
+
+	var path = 'M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'
+
+	text.path(path).font({ size: 42.5, family: 'Verdana' });
+
+	draw.path('M0 0 H50 A20 20 0 1 0 100 50 v25 C50 125 0 85 0 85 z');
+
+
+	var path = draw.path('M0 0 A50 50 0 0 1 50 50 A50 50 0 0 0 100 100');
+
+	path.fill('none').move(20, 200).stroke({ width: 1, color: '#ccc' })
+
+	path.marker('start', 10, 10, function(add) {
+		add.circle(10).fill('#f06');
+	})
+	path.marker('mid', 10, 10, function(add) {
+		add.rect(5, 10).cx(5).fill('#ccc')
+	})
+
+	path.marker('end', 20, 20, function(add) {
+		add.circle(6).center(4, 5);
+		add.circle(6).center(4, 15);
+		add.circle(6).center(12, 10);
+
+		this.fill('#0f9');
+	});
+
+	var pattern = draw.pattern(20, 20, function(add) {
+		add.rect(20,20).fill('#f06')
+		add.rect(10,10)
+		add.rect(10,10).move(10,10)
+	})
+	var rect = draw.rect(100, 100).move(0,300).attr({ fill: '#f06' });
+	rect.attr({ fill: pattern });
+
+
+	var rect = draw.rect(100, 100).move(0,400).attr({ fill: '#f06' });
+	var ellipse = draw.ellipse(80, 40).move(0, 470);
+	var text = draw.text('SVG.JS').move(0, 400).font({ size: 36 });
+
+	//剪裁
+	var clip = draw.clip();
+	clip.add(text).add(ellipse);
+	rect.clipWith(clip);
+
+
+	var rect = draw.rect(50, 50).fill('#f22').move(200,300);
+	var use  = draw.use(rect).move(200, 200);
+	use.stroke({width:10,color:"#f2f"});
+
+	</script>
+</html>

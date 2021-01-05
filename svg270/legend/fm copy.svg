@@ -1,0 +1,37 @@
+<g id="layer1" 
+   stroke="#000000"
+   stroke-width="2.5"
+   fill="none"
+   fill-opacity="1";
+>
+   
+    <path
+       style="stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 344.98414,444.49577 84.17088,0"
+     
+        />
+    <path
+       style="stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 344.1388,577.06737 85.79677,0"
+       
+        />
+    <path
+       style="stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 344.61722,444.96588 86.11572,132.5716"
+     
+        />
+    <path
+       style="stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 429.13718,444.70625 344.61823,577.06586"
+      
+        />
+    <path
+       style="stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 344.96117,577.30243 85.79678,0"
+    
+        />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke-miterlimit:4;stroke-opacity:0.98543689000000001;stroke-dasharray:none"
+       d="m 427.09249,366.4686 a 26.162951,24.04163 0 1 1 -52.32591,0 26.162951,24.04163 0 1 1 52.32591,0 z"
+       transform="matrix(0.40045574,0,0,0.40045574,226.89298,362.6235)" />
+  </g>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+	<!--
+	<link rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../demo.css">
+	<script type="text/javascript" src="../../jquery.min.js"></script>
+	<script type="text/javascript" src="../../jquery.easyui.min.js"></script>
+	-->
+
+	<script src="svg270/svg.min.js"></script>
+	
+	<script src="svg270/svg.panzoom.min.js"></script>
+	<script src="svg270/svg.draggable.min.js"></script>
+
+	
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+	
+</head>
+<body>
+	<a>我是一个视窗</a>
+	<div id="drawing" style="border:2px solid rosybrown;width: 800px;height: 600px;" ></div>
+
+
+</body>
+
+<script >
+
+// pan and zoom
+var drawSvg = SVG('drawing').size("800", "600").panZoom({zoomMin: 0.01, zoomMax: 100});
+
+
+//canvas group 
+var canvasGroup = drawSvg.group();
+
+//canvas
+var canvasRect = canvasGroup.rect("100%", "100%").fill("#440");
+var text = canvasGroup.text("我是一个带颜色的画布").move(100,200);
+var path = 'M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100'
+text.path(path).font({ size: 42.5, family: 'Verdana' });
+
+
+
+
+// it is one object instance
+var g1 = drawSvg.group();
+var rect = g1.rect(100, 100).fill("#040");
+var rect2 = g1.rect(100, 100).move(100,100).fill("#04f");
+var circle = g1.circle(50).move(75,75).fill("#f4f");
+// g1.draggable();
+
+// it is another one .
+var g2 = drawSvg.group();
+g2.rect(100, 100).move(300,200).fill("#94f");
+g2.circle(50).move(275,175).fill("#f40");
+// g2.draggable();
+
+
+// it is three 
+var three = drawSvg.circle(100).move(400,400);
+three.selectize().resize();
+three.draggable();
+
+// it is four 
+var g4 = drawSvg.group();
+var c41 = drawSvg.circle(100).fill("#444").move(500,400);
+var c42 = drawSvg.circle(50).fill("#4f4").move(500,420);
+c41.selectize().resize();
+c42.selectize().resize();
+g4.add(c41);
+g4.add(c42);
+
+g4.draggable();
+
+// 禁用默认拖拽，自定义拖拽事件
+// canvasGroup.draggable().on('dragmove', function(e){
+// 	//方法1：可以默认的移动方式
+// 	// e.preventDefault()
+//   	console.log(e.detail.p.x, e.detail.p.y);
+// 	// events are still bound e.g. dragend will fire anyway
+
+// 	//方法2：也可以禁用默认的移动方式，使用下面的自己定义移动轨迹
+// 	// this.move(e.detail.p.x, e.detail.p.y) ; 
+// })
+
+
+
+//导出svg代码
+// var svg = drawSvg.svg();
+// console.log(svg);
+
+
+// 点击事件里只有选择效果
+// g1.click(function() {
+// 	g1.selectize();
+// 	g2.selectize(false);
+// });
+
+// g2.click(function() {
+// 	g2.selectize();
+// 	g1.selectize(false);
+// });
+
+// 点击事件里选择效果+变形效果
+g1.click(function() {
+	g1.selectize().resize();
+	g1.draggable();
+	g2.selectize(false);
+	
+});
+
+g2.click(function() {
+	g2.selectize().resize();
+	g2.draggable();
+	g1.selectize(false);
+});
+	
+</script>
+</html>

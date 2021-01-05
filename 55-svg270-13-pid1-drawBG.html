@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.min.js"></script>
+	<script src="svg270/svg.draggable.min.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+
+</style>
+
+<body>
+	<div style="border-bottom: 1px solid gray;">我是一个视窗</div>
+
+	底图透明度：<div id="id_image_opacity" style="width:200px"></div>
+
+	<div id="drawing">
+
+	</div>
+
+
+</body>
+
+<script>
+
+	// 这里是整个视窗和最外层的<svg>是一致的
+	var drawimgWidth = 1000;
+	var drawingHeight = 800;
+	$("#drawing").css({
+		border: "2px solid rosybrown",
+		width: drawimgWidth + "px",
+		height: drawingHeight + "px",
+	});
+	var draw = SVG('drawing').size(drawimgWidth, drawingHeight)
+	// pan and zoom
+	draw.panZoom({ zoomMin: 0.01, zoomMax: 100 });;
+
+	//这是底图的测试图片
+	var imageWidth = 800;
+	var imageHeight = 600;
+	var image = draw.image('svg270/1.jpeg', imageWidth, imageHeight);
+
+	//灰度调整区域
+	var imgArea = draw.group().style({ cursor: 'pointer', fill: '#fff' }).style("fill-opacity", 0.3);
+	imgArea.add(image);
+	// imgArea.rect(imageWidth, imageHeight).attr("stroke", "#f3f").attr("stroke-width", "2");
+	imgArea.rect(imageWidth, imageHeight);
+
+
+
+
+
+	btn();
+	function btn() {
+
+		//底图透明度按钮
+		$('#id_image_opacity').slider({
+			mode: 'h', //声明滚动条类型。可用值有：'h'(水平)、'v'(垂直)。   
+			min: 0,
+			max: 1,
+			step: 0.01,
+			value:0.3,
+			tipFormatter: function (value) {
+				return value + '%';
+			},
+			onChange: function (newValue, oldValue) {
+				imgArea.style("fill-opacity", newValue);
+				console.log(newValue);
+			}
+
+		});
+	}
+
+
+
+
+
+
+</script>
+
+</html>

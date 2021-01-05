@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.min.js"></script>
+	<script src="svg270/svg.draggable.min.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+
+
+</style>
+
+<body>
+
+	<div id="drawing">
+
+	</div>
+
+
+</body>
+
+<script>
+
+	// 这里是整个视窗和最外层的<svg>是一致的
+	var drawimgWidth = 1000;
+	var drawingHeight = 800;
+	$("#drawing").css({
+
+		bordser: "2px solid rosybrown",
+		width: drawimgWidth + "px",
+		height: drawingHeight + "px",
+	});
+
+	var draw = SVG('drawing').size(drawimgWidth, drawingHeight)
+	// pan and zoom
+	draw.panZoom({ zoomMin: 0.01, zoomMax: 100 });;
+
+	//参考点
+	var r11 = draw.rect(100,100).fill("#f33");
+	var g11 = draw.group().add(r11).draggable();
+	g11.rect(100,100).move(10,100).fill("#033");
+
+
+	$.post("./svg270/legend/sb1.svg", {}, function (data) {
+		// console.log(data);
+		draw.svg(data);
+		var a = SVG.get("layer1");
+		//记录血的教训：必须指定 fill 颜色;不然 fill=none 时 ，移动时必须选中边框才能移动
+		a.draggable();
+
+		var size = 1000;
+		for(var i=0;i<size;i++){
+
+			var x= Math.floor(Math.random()*500)+50;    // 可均衡获取 0 到 200 的随机整数。;
+			var y = Math.floor(Math.random()*500)+50;
+			var b = a.clone().translate(x,y).draggable();
+			
+		}
+		
+		
+		// console.log(b.svg());
+	}, "text");
+
+
+	}
+
+</script>
+
+</html>

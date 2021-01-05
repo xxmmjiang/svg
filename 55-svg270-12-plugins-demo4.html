@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+	
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+
+	<script src="svg270/svg.min.js"></script>
+	
+	<script src="svg270/svg.panzoom.min.js"></script>
+	<script src="svg270/svg.draggable.min.js"></script>
+
+	
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+	
+</head>
+<body>
+	<a>我是一个视窗</a>
+	<div id="drawing" style="border:2px solid rosybrown;width: 800px;height: 600px;" >
+		
+		<div id="xxx"></div>
+	</div>
+
+
+</body>
+
+<script >
+
+// pan and zoom
+var draw = SVG('drawing').size("800", "600").panZoom({zoomMin: 0.01, zoomMax: 100});;
+
+
+// var rect = draw.rect(100, 100).fill('#f0f')
+// var use  = draw.use(rect).move(200, 200);
+
+var use  = draw.use('xxx', 'svg270/2.svg').move(200, 200);
+
+
+var t=200;
+for(var i=0;i<t;i++ ){
+	var x= Math.floor(Math.random()*200)+50;    // 可均衡获取 0 到 200 的随机整数。;
+	var y = Math.floor(Math.random()*200)+50;
+	console.log(x+"]["+y);
+	console.log(i);
+	
+
+// 	var rect = draw.defs().rect(100, 100).fill('#f09')
+// var use  = draw.use(rect).move(200, 200);
+
+
+	// $.post("./svg270/2.svg",{},function(data){
+	// 	console.log(data);
+	// 	draw.svg(data);
+	// },"text");
+	
+
+
+}
+	
+
+
+
+
+
+</script>
+</html>

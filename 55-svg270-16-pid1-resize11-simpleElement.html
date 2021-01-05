@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li{
+		margin-bottom: 20px;
+		cursor: pointer;
+	}
+	
+	
+	
+</style>
+
+<body>
+
+	<div id="drawing" style="">
+
+	</div>
+
+
+</body>
+
+<script>
+
+// 这里是整个视窗和最外层的<svg>是一致的
+var drawimgWidth = 1000;
+var drawingHeight = 600;
+$("#drawing").css({
+	
+	border: "2px solid rosybrown",
+	width: drawimgWidth + "px",
+	height: drawingHeight + "px",
+});
+
+
+
+var draw = SVG('drawing').size("100%", "100%")
+// pan and zoom
+draw.panZoom({ zoomMin: 0.01, zoomMax: 100 });
+
+
+
+
+
+
+var r = draw.rect(100,100);
+r.attr("stroke","#0AB130").attr("stroke-width","2").fill("none");
+r.selectize().resize().draggable();
+
+var c = draw.circle(100);
+c.move(100,100).stroke("#0AB130").fill("none");
+// c.selectize().resize().draggable();
+
+
+var g = draw.group();
+g.add(r);
+g.add(c);
+
+var opt = {
+	constraint: {
+		minX: 0,
+		minY: 0,
+		maxX: 200,
+		maxY: 300
+	}
+};
+// g.selectize().resize(opt).draggable();
+
+
+</script>
+
+</html>
