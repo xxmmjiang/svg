@@ -154,7 +154,9 @@ imgArea.add(image);
 imgArea.rect(imageWidth, imageHeight);
 
 
-
+//创建虚线线型
+//参考 https://www.runoob.com/svg/svg-stroke.html
+draw.line(0, 0, 100, 150).stroke({ width: 3 }).attr("stroke-dasharray","10,10");
 
 
 btn();
