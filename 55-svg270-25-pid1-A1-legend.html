@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li{
+		margin-bottom: 20px;
+		cursor: pointer;
+	}
+	
+	
+	
+</style>
+
+<body>
+	<div style="float:left;margin-right: 50px;width: 100px;height: 400px;">
+		
+	</div>
+	
+	<div style="float:left;">
+		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
+		<div id="drawing" style="float:left;border:2px solid green;width: 1000px;height: 700px;">
+			
+		</div>
+	</div>
+	
+
+
+</body>
+
+<script>
+
+//全局键盘事件
+$(document).on("keyup",function(e){
+
+//删除选中的对象
+if(46==e.keyCode){
+	
+	var els = draw.select(".selectedObject");
+	if(els.members.length<=0){
+		return;
+	}
+	for(var i in els.members){
+		els.members[i].remove();
+	}
+}
+})
+
+
+// var draw = SVG('drawing').size("1000", "700")
+var draw = SVG('drawing').size("1000", "700")
+// pan and zoom
+// draw.panZoom({zoomMin: 0.1, zoomMax: 20,zoomFactor:0.2});
+draw.panZoom();
+
+draw.on('zoom', function( box, focus) {
+	// ev.preventDefault()
+	//图纸放大和缩小会触发
+	//console.log(box)
+	//console.log(focus)
+})
+// var defaultZoom = draw.zoom(1);
+
+/**
+ * 绑定右击事件
+ */ 
+draw.on("contextmenu",function(e){
+	e.preventDefault();
+
+});
+
+
+
+
+//创建虚线线型
+//参考 https://www.runoob.com/svg/svg-stroke.html
+draw.line(0, 0, 100, 150).stroke({ width: 3 }).attr("stroke-dasharray","10,10");
+
+
+	
+
+loadLegendByUrl("./svg270/legend/"+"A1（横）图框+图签（SEI）.svg",function(text){
+	// console.log(text);
+
+	draw.svg(text);
+	//A0=1189*841  
+	//A1=841*594  
+	//A2=594*420  
+	//A3=420*297  
+	//A4=297*210  
+
+	//单位是毫米
+	var a = SVG.get("demo").size("841mm","594mm").attr("id","id_"+createUUID()).draggable();
+	
+})	
+// var arr = ["列管式反应器（20-100）.svg","卧式容器（50-20）.svg","压力表（10）.svg","闸阀(法兰)(10-4).svg"];
+var arr = ["列管式反应器（20-100）.svg"];
+for(var i in arr){
+	var e = arr[i];
+	loadLegendByUrl("./svg270/legend/"+e,function(text){
+	// console.log(text);
+
+	draw.svg(text);
+	var a = SVG.get("demo").attr("id","id_"+createUUID()).draggable();
+	
+})	
+}
+
+
+/**
+ * 加载图例
+ */
+ function loadLegendByUrl(url,callback){
+	$.post(url, {}, function (data) {	
+
+		if($.isFunction(callback)){
+			callback(data);
+		}
+	}, "text");
+}
+/**
+ * 坐标转换公式
+ * from (x,y)-> vbox(x,y)
+ */ 
+ function transformFrom(x,y){
+	//将外部坐标转换为内部 vbox坐标系
+	var box = draw.viewbox();
+	// console.log(box);
+	var width4Client = $("#drawing").width();
+	var height4Client = $("#drawing").height();
+	
+	//计算图例在 vbox 中的真实坐标
+	var x4Vbox = (box.width/width4Client)*x+box.x;
+	var y4Vbox = (box.height/height4Client)*y+box.y;
+	//计算图例在 vbox 中的缩放比例
+	var zoom = box.zoom;
+
+	return {x:x4Vbox,y:y4Vbox,zoom:zoom}
+
+}
+
+function createUUID(){
+	var x= 13*Math.floor(Math.random()*1000)+"-"+7*Math.floor(Math.random()*100);  
+	return "id_"+x;
+}
+</script>
+
+</html>

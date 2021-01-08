@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="35.433071"
+   height="17.716536"
+   id="demo"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="闸阀(法兰)(10-4).dxf">
+  <metadata
+     id="metadata4411">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1005"
+     id="namedview4409"
+     showgrid="false"
+     inkscape:document-units="mm"
+     units="mm"
+     inkscape:zoom="20.3"
+     inkscape:cx="5.7288024"
+     inkscape:cy="6.8986727"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g4391" />
+  <desc
+     id="desc4375">C:\Users\book20160328\Desktop\Õ¢·§(·¨À¼)(10-4).dxf - scale = 1.000000</desc>
+  <defs
+     id="defs4377">
+    <marker
+       refY="0"
+       refX="0"
+       style="overflow:visible"
+       id="DistanceX"
+       orient="auto">
+      <path
+         style="stroke:#000000;stroke-width:0.5"
+         d="M 3,-3 -3,3 M 0,-5 0,5"
+         id="path4380"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <pattern
+       height="8"
+       width="8"
+       patternUnits="userSpaceOnUse"
+       y="0"
+       x="0"
+       id="Hatch">
+      <path
+         linecap="square"
+         stroke="#000000"
+         stroke-width="0.25"
+         d="M8 4 l-4,4"
+         id="path4383" />
+      <path
+         linecap="square"
+         stroke="#000000"
+         stroke-width="0.25"
+         d="M6 2 l-4,4"
+         id="path4385" />
+      <path
+         linecap="square"
+         stroke="#000000"
+         stroke-width="0.25"
+         d="M4 0 l-4,4"
+         id="path4387" />
+    </pattern>
+    <symbol
+       id="*MODEL_SPACE" />
+    <symbol
+       id="*PAPER_SPACE" />
+  </defs>
+  <g
+     inkscape:label="0"
+     inkscape:groupmode="layer"
+     id="g4391"
+     transform="translate(0,-1034.6457)">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 3.9968282,1034.6783 0,17.6676"
+       id="path4393"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 31.498374,1034.6783 0,17.6676"
+       id="path4395"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 4.1880323,1035.0785 31.272337,1051.876"
+       id="path4397"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 31.204499,1035.1115 4.2558709,1051.8779"
+       id="path4399"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 34.93606,1034.6783 0,17.6676"
+       id="path4405"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 0.55913236,1034.6783 0,17.6676"
+       id="path4407"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 17.948101,1034.6928 0,17.6674"
+       id="path4407-3"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>
