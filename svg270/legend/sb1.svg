@@ -3,12 +3,14 @@ stroke="#000000"
    stroke-width="3"
    fill="none"
    fill-opacity="1"
+   width="50mm"
+   height="50mm"
      id="layer1">
     <rect
        style="stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.99435"
        id="rect3817"
-       width="151.85049"
-       height="103.89932"
+       width="151.85049mm"
+       height="103.89932mm"
        x="2.7642951"
        y="31.279461" />
     <path
