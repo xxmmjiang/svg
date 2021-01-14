@@ -460,6 +460,7 @@ function loadAllLegends(){
 	})
 
 	//放置图例时的触发事件
+	//svg 元素不支持 拖拽的所有事件
 	$("#drawing").on("drop",function(e){
 	//自定义拖拽函数
 	// draw.on("drop",function(e){
@@ -539,6 +540,11 @@ function bindNewLegend(x,y,zoom){
 			});
 		}
 		
+	}).on("mouseover",function(e2){
+		var x = e2.clientX;
+		var y = e2.clientY;
+		console.log(x+"#"+y);
+
 	})
 
 

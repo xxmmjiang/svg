@@ -66,6 +66,7 @@
 					<li value="legend2/列管换热器（20-100）.svg" draggable="true">列管换热器（20-100）.svg</li>
 					<li value="legend2/卧式容器（50-20）(1).svg" draggable="true">卧式容器（50-20）(1).svg</li>
 					<li value="legend2/压力表（10）(1).svg" draggable="true">压力表（10）(1).svg</li>
+					<li value="legend2/pl.svg" draggable="true">pl.svg</li>
 			
 				</ul>
 			</div>
@@ -84,6 +85,23 @@
 </body>
 
 <script>
+
+/**
+ * 全局参数
+*/
+var currentDragLegendText = null;
+var highColor = "#1470FA";
+var defaultColor = "#000";
+
+/**
+ * 是否为单选
+ */
+var isSingleSelected = true;
+
+/**
+ * 正在画管线
+ */ 
+var currentDrawingPipeline = null;
 
 //全局键盘事件
 $(document).on("keyup",function(e){
@@ -120,7 +138,8 @@ draw.on('zoom', function( box, focus) {
  */ 
 draw.on("contextmenu",function(e){
 	e.preventDefault();
-
+	//结束管线绘制
+	currentDrawingPipeline = null;
 });
 
 /**
@@ -130,12 +149,12 @@ draw.on("contextmenu",function(e){
 	var x = e.offsetX;
 	var y = e.offsetY;
 	
-	console.log(x+"--"+y)
-	drawingPipeline(x,y);
 
-	// var box = transformFrom(x,y);
-	//console.log(box.x+"--"+box.y)
-	// drawingPipeline(box.x,box.y);
+	// drawingPipeline(x,y);
+	//必须经过坐标转换，转换为 vbox 内坐标
+	var box = transformFrom(x,y);
+	console.log(box.x+"--"+box.y)
+	drawingPipeline(box.x,box.y);
 	
 	
 })
@@ -154,7 +173,7 @@ var image = draw.image('svg270/images/drawing.jpg').loaded(function(loader) {
   	//制作底图上面的蒙版，用于调整底图的透明度
 	var rect = imgArea.rect(loader.width, loader.height);
 	/**
-	 * 绑定变形事件
+	 * 绑定变形事件,使遮罩层随着图片变形而变形
 	 * p = {dx: diffX, dy: diffY, event: event}
 	 */
 	this.on("resizing",function(p){
@@ -187,7 +206,7 @@ loadAllLegends();
  * 绘制管线
  */ 
 function drawingPipeline(x,y){
-	
+	console.log(x+"--"+y)
 	/**
 	 * 画管线的逻辑
 	 */ 
@@ -401,19 +420,7 @@ function btn() {
 
 }
 
-var currentDragLegendText = null;
-var highColor = "#1470FA";
-var defaultColor = "#000";
 
-/**
- * 是否为单选
- */
-var isSingleSelected = true;
-
-/**
- * 正在画管线
- */ 
-var currentDrawingPipeline = null;
 /**
  * 加载图例
  */
@@ -460,9 +467,8 @@ function loadAllLegends(){
 	})
 
 	//放置图例时的触发事件
+	//svg 元素不支持 拖拽的所有事件
 	$("#drawing").on("drop",function(e){
-	//自定义拖拽函数
-	// draw.on("drop",function(e){
 		var x = e.offsetX;
 		var y = e.offsetY;
 
@@ -478,11 +484,12 @@ function loadAllLegends(){
 
 		bindNewLegend(box.x,box.y,box.zoom);
 
-		tip("delte键删除选中对象");
+		
 	}).on("dragover",function(e){
 		return false;
 	})
-	
+
+
 	
 }
 
@@ -493,10 +500,17 @@ function loadAllLegends(){
 function bindNewLegend(x,y,zoom){
 
 	var g = SVG.get("demo").attr("id",createUUID());
-	var group = SVG.get("layer1").attr("id",createUUID());
 	
+	if("pl"===g.attr("legendtype")){
+		newPipeline(g,x,y,zoom);
+		return;
+	}
+
+	var group = SVG.get("layer1").attr("id",createUUID());
+
 	//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度变为0，这样看着和没底色差不多。
 	group.attr("fill","#fff").attr("fill-opacity",0);
+	
 	
 	// console.log(x);
 
@@ -539,25 +553,80 @@ function bindNewLegend(x,y,zoom){
 			});
 		}
 		
+	}).on("mouseover",function(e2){
+		var x = e2.clientX;
+		var y = e2.clientY;
+		console.log(x+"#"+y);
+
 	})
 
 
-	if("pl"===g.attr("legendtype")){
-		// var line = g.children();
-		// line[0].plot(x, y, x, y);
+	//默认选中
+	selectG(g);
+
+	//停止绘制管线
+	currentDrawingPipeline = null;
+	tip("delte键删除选中对象");
+}
+
+
+/**
+ * 管线
+ */ 
+function newPipeline(g,x,y,zoom){
+
+
+	//将图例缩放程度和底图的缩放保持一致
+	// g.scale(zoom,x,y);
+
+	//记录血的教训：必须指定 fill 颜色;不然 fill=none 时 ，移动时必须选中边框才能移动
+	// g.draggable();
+
+
+	//加入统一的定位信息
+	g.addClass("lengendObject");	
+
+	//左键单击
+	g.click(function(){
+		
+		selectG(this);
+		
+	});
+	//右击单击
+	g.on("contextmenu",function(e){
+		e.preventDefault();
+		selectG(this);
+		
+		if(currentDrawingPipeline){
+			//显示菜单
+			$('#id_mm_pipeline_rightMenu').menu('show', {    
+				left: e.clientX,    
+				top: e.clientY    
+			});
+		}else{
+			//显示菜单
+			$('#mm').menu('show', {    
+				left: e.clientX,    
+				top: e.clientY    
+			});
+		}
+		
+	}).on("mouseover",function(e2){
+		var x = e2.clientX;
+		var y = e2.clientY;
+		console.log(x+"#"+y);
+
+	})
+
+
+	var line = g.children();
+	line[0].plot(x-100, y, x, y);
+
 		currentDrawingPipeline = g;
 		// g.select("image").move(x,y);
 
 		//提示信息
 		tip("左键点击绘制管线，右击结束绘制。");
-	}else{
-
-		//默认选中
-		selectG(g);
-
-		//停止绘制管线
-		currentDrawingPipeline = null;
-	}
 }
 
 /**
