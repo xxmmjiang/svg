@@ -159,6 +159,7 @@ draw.on("contextmenu",function(e){
 	
 })
 
+
 //这是底图的测试图片
 var imgArea = draw.group().style({ fill: '#fff' }).style("fill-opacity", 0.3);
 var imageWidth = 800;
@@ -553,7 +554,10 @@ function bindNewLegend(x,y,zoom){
 			});
 		}
 		
-	}).on("mouseover",function(e2){
+	})
+	//图例的悬浮事件，这个事件用于未来和其他图例的事件交互
+	//当鼠标进入图例时，触发该事件，比如用于 锚点显示
+	g.on("mouseover",function(e2){
 		var x = e2.clientX;
 		var y = e2.clientY;
 		console.log(x+"#"+y);
