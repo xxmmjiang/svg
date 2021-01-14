@@ -35,8 +35,9 @@
 </style>
 
 <!-- 
-	这个案例，使用 mm 标准图例，且包含 <svg></svg>，测试加入单位 和不加单位的区别。
-	结论：尺寸无影响，但某些超出范围的图例，会显示范围有细微差异
+这个案例 使用标准的 mm （毫米）的图例，将svg 外部签取消，只留下 <g> ，测试效果。
+	结果：失败
+
 -->
 <body>
 	<div style="float:left;margin-right: 50px;">
@@ -46,12 +47,12 @@
 		<a>图例放大：</a><div id="id_btn_scaleBig" style="width:200px"></div>
 		<a>图例缩小：</a><div id="id_btn_scaleSmall" style="width:200px"></div>
 		<a id="id_btn_clearAllSelected" href="#">清除选择</a> 
-		<a id="id_btn_lockBackgroundImage" href="#" value="0">锁定底图</a> 
+		<a id="id_btn_lockBackgroundImage" href="#" value="0">底图已解锁</a> 
 	</div>
 	
 	<div style="float:left;">
 		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
-		<div id="drawing" style="float:left;border:2px solid green;width: 800px;height: 600px;">
+		<div id="drawing" style="float:left;border:2px solid green;width: 1000px;height: 800px;">
 			
 		</div>
 	</div>
@@ -62,14 +63,15 @@
 				<ul id="legend-list">
 
 
-					<li value="legend2/截止阀（10-4）.svg" draggable="true">截止阀（10-4）.svg</li>
-					<li value="legend2/列管换热器（20-100）.svg" draggable="true">列管换热器（20-100）.svg</li>
-					<li value="legend2/卧式容器（50-20）(1).svg" draggable="true">卧式容器（50-20）(1).svg</li>
-					<li value="legend2/压力表（10）(1).svg" draggable="true">压力表（10）(1).svg</li>
+					<li value="legend4/阀门-jx.svg" draggable="true">阀门-jx.svg</li>
+					<li value="legend4/列管式反应器-jx.svg" draggable="true">列管式反应器-jx.svg</li>
+					<li value="legend4/压力表-jx.svg" draggable="true">压力表-jx.svg</li>
 			
 				</ul>
 			</div>
 	</div>
+	
+</div>
 
 	<!-- 通用图例的右键菜单-->
 	<div id="mm" class="easyui-menu" style="width:120px;">   
@@ -134,24 +136,28 @@ draw.on("contextmenu",function(e){
 	drawingPipeline(x,y);
 
 	// var box = transformFrom(x,y);
-	//console.log(box.x+"--"+box.y)
+	//console.log(box.x+"--"+box.y);
 	// drawingPipeline(box.x,box.y);
 	
 	
 })
 
-//这是底图的测试图片
+
+//底图区域
+var imgArea = draw.group().style({ fill: '#fff' }).style("fill-opacity", 0.3);
 var imageWidth = 800;
 var imageHeight = 600;
+//这是底图的测试图片
 // var image = draw.image('svg270/images/drawing.jpg', imageWidth, imageHeight);
-var image = draw.image('svg270/images/drawing.jpg');
-console.log(image);
-console.log(image.width());
+// var image = draw.image('svg270/images/drawing.jpg',300,100);
 
-var imgArea = draw.group().style({ fill: '#fff' }).style("fill-opacity", 0.3);
+var image = draw.image('svg270/images/drawing.jpg').loaded(function(loader) {
+  this.size(loader.width, loader.height)
+})
 imgArea.add(image);
 //灰度调整区域
 imgArea.rect(imageWidth, imageHeight);
+imgArea.draggable();
 
 
 //创建虚线线型 这是 仪表线的 线型
@@ -322,10 +328,9 @@ function btn() {
 			console.log(item.text);
 			if('放大'==item.text){
 				var transform = draw.select('.selectedObject').members[0].transform();
-		
-				// draw.select('.selectedObject').scale(transform.scaleX*2,transform.scaleY*2);
-				// transform = draw.select('.selectedObject').members[0]
-				draw.select('.selectedObject').scale(transform.scaleX*2,transform.scaleY*2)
+				// console.log(transform);
+				draw.select('.selectedObject').scale(transform.scaleX*2,transform.scaleY*2);
+			
 
 			}else if('缩小'==item.text){
 				var transform = draw.select('.selectedObject').members[0].transform();
@@ -341,20 +346,22 @@ function btn() {
 		}    
 	});
 	
-	//锁定底图
+	//锁定底图 0代表 未锁定  1：已锁定
 	$("#id_btn_lockBackgroundImage").linkbutton({
 		onClick:function(){
 			var v = $("#id_btn_lockBackgroundImage").attr("value");
 			if(v==0){
-				imgArea.draggable();
+				
 				$("#id_btn_lockBackgroundImage").attr("value",1).linkbutton({
-					text:'解锁底图'
+					text:'底图已锁定'
 				});
-			}else{
 				imgArea.draggable(false);
+			}else{
+				
 				$("#id_btn_lockBackgroundImage").attr("value",0).linkbutton({
-					text:'锁定底图'
+					text:'底图已解锁'
 				});
+				imgArea.draggable();
 			}
 		}
 	})
@@ -392,7 +399,16 @@ var currentDrawingPipeline = null;
  * 加载图例
  */
 function loadAllLegends(){
-	//var arr = ["sb1","sb2","yb","fm","sb1-note","pl"];
+	//加载图框
+	loadLegendByUrl("./svg270/legend4/A1（横）图框+图签（SEI）修改mm.svg",function(text){
+		draw.svg(text);
+		var a = SVG.get("demo").attr("id",createUUID());
+		
+		//将外部坐标转换为内部 vbox坐标系
+		// var box = transformFrom(x,y);
+
+	})
+		
 
 	$("#legend-list li").each(function(){
 
@@ -437,12 +453,13 @@ function loadAllLegends(){
 		}
 		// console.log(currentDragLegendText);
 		draw.svg(currentDragLegendText);
-	
+		var a = SVG.get("layer1").attr("id",createUUID());
+		
 		//将外部坐标转换为内部 vbox坐标系
 		var box = transformFrom(x,y);
 
 
-		bindNewLegend(box.x,box.y,box.zoom);
+		bindNewLegend(a,box.x,box.y,box.zoom);
 
 		tip("delte键删除选中对象");
 	}).on("dragover",function(e){
@@ -451,32 +468,49 @@ function loadAllLegends(){
 	
 	
 }
+/**
+ * 坐标转换公式
+ * from (x,y)-> vbox(x,y)
+ */ 
+function transformFrom(x,y){
+	//将外部坐标转换为内部 vbox坐标系
+	var box = draw.viewbox();
+	// console.log(box);
+	var width4Client = $("#drawing").width();
+	var height4Client = $("#drawing").height();
+	
+	//计算图例在 vbox 中的真实坐标
+	var x4Vbox = (box.width/width4Client)*x+box.x;
+	var y4Vbox = (box.height/height4Client)*y+box.y;
+	//计算图例在 vbox 中的缩放比例
+	var zoom = box.zoom;
 
+	return {x:x4Vbox,y:y4Vbox,zoom:zoom}
+
+}
 
 /**
  * 为新的图例绑定事件
  */ 
-function bindNewLegend(x,y,zoom){
-
-	var g = SVG.get("demo").attr("id",createUUID());
-	var group = SVG.get("layer1").attr("id",createUUID());
-	
-	//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度变为0，这样看着和没底色差不多。
-	group.attr("fill","#fff").attr("fill-opacity",0);
+function bindNewLegend(g,x,y,zoom){
 	
 	// console.log(x);
 
 	// 将图例移动到鼠标位置
-	// g.translate(x,y);
-	g.move(x,y);
+	g.translate(x,y);
+	// g.translate(0,0);
+	// g.move(x,y);
+	
+
 
 	//将图例缩放程度和底图的缩放保持一致
-	// g.scale(zoom,x,y);
+	g.scale(zoom,x,y);
 
 	//记录血的教训：必须指定 fill 颜色;不然 fill=none 时 ，移动时必须选中边框才能移动
 	g.draggable();
+	//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度变为0，这样看着和没底色差不多。
+	g.attr("fill","#fff").attr("fill-opacity",0);
 
-	
 	//加入统一的定位信息
 	g.addClass("lengendObject");	
 	
@@ -525,52 +559,25 @@ function bindNewLegend(x,y,zoom){
 		currentDrawingPipeline = null;
 	}
 }
-
-/**
- * 坐标转换公式
- * from (x,y)-> vbox(x,y)
- */ 
- function transformFrom(x,y){
-	//将外部坐标转换为内部 vbox坐标系
-	var box = draw.viewbox();
-	// console.log(box);
-	var width4Client = $("#drawing").width();
-	var height4Client = $("#drawing").height();
-	
-	//计算图例在 vbox 中的真实坐标
-	var x4Vbox = (box.width/width4Client)*x+box.x;
-	var y4Vbox = (box.height/height4Client)*y+box.y;
-	//计算图例在 vbox 中的缩放比例
-	var zoom = box.zoom;
-
-	return {x:x4Vbox,y:y4Vbox,zoom:zoom}
-
-}
 /**
  * 选中
  */
 function selectG(group){
+	var gorupId = group.attr("id");
 	if(isSingleSelected){
 
 		unselectAllGroup();
 		
+		group.attr("stroke",highColor);
+		
 	}
-	//高亮
-	highlight(group);
-	
+	//
+	group.addClass("selectedObject");
 
 	//加入选择的插件
 	// group.selectize();
 	//加入变形的 插件
 	// group.resize();
-}
-
-function highlight(group){
-	var selectedGroup = group.select("g");
-
-	selectedGroup.attr("stroke",highColor);
-	//加入 class 标志	
-	group.addClass("selectedObject");
 
 
 }
@@ -592,12 +599,10 @@ function tip(msg){
  */ 
 function unselectAllGroup(){
 
-	var elements = draw.select('.lengendObject');
-	
-	draw.select('.lengendObject g').attr("stroke",defaultColor);
-		// elements.selectize(false);
-		// return elements.resize('stop');
-	elements.removeClass("selectedObject");
+	var elements = draw.select('.lengendObject').attr("stroke",defaultColor).removeClass("selectedObject");
+		elements.selectize(false);
+		return elements.resize('stop');
+
 }
 
 /**

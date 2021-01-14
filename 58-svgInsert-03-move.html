@@ -35,9 +35,8 @@
 </style>
 
 <!-- 
-这个案例 使用标准的 mm （毫米）的图例，将svg 外部签取消，只留下 <g> ，测试效果。
-	结果：失败
-
+	这个案例，使用 mm 标准图例，且包含 <svg></svg>，测试加入单位 和不加单位的区别。
+	结论：尺寸无影响，但某些超出范围的图例，会显示范围有细微差异
 -->
 <body>
 	<div style="float:left;margin-right: 50px;">
@@ -47,12 +46,12 @@
 		<a>图例放大：</a><div id="id_btn_scaleBig" style="width:200px"></div>
 		<a>图例缩小：</a><div id="id_btn_scaleSmall" style="width:200px"></div>
 		<a id="id_btn_clearAllSelected" href="#">清除选择</a> 
-		<a id="id_btn_lockBackgroundImage" href="#" value="0">锁定底图</a> 
+		<a id="id_btn_lockBackgroundImage" href="#" value="1">底图已锁定</a> 
 	</div>
 	
 	<div style="float:left;">
 		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
-		<div id="drawing" style="float:left;border:2px solid green;width: 800px;height: 600px;">
+		<div id="drawing" style="float:left;border:2px solid green;width: 1000px;height: 800px;">
 			
 		</div>
 	</div>
@@ -63,10 +62,10 @@
 				<ul id="legend-list">
 
 
-					<li value="legend3/截止阀（10-4）.svg" draggable="true">截止阀（10-4）.svg</li>
-					<li value="legend3/列管换热器（20-100）.svg" draggable="true">列管换热器（20-100）.svg</li>
-					<li value="legend3/卧式容器（50-20）(1).svg" draggable="true">卧式容器（50-20）(1).svg</li>
-					<li value="legend3/压力表（10）(1).svg" draggable="true">压力表（10）(1).svg</li>
+					<li value="legend2/截止阀（10-4）.svg" draggable="true">截止阀（10-4）.svg</li>
+					<li value="legend2/列管换热器（20-100）.svg" draggable="true">列管换热器（20-100）.svg</li>
+					<li value="legend2/卧式容器（50-20）(1).svg" draggable="true">卧式容器（50-20）(1).svg</li>
+					<li value="legend2/压力表（10）(1).svg" draggable="true">压力表（10）(1).svg</li>
 			
 				</ul>
 			</div>
@@ -106,7 +105,7 @@ if(46==e.keyCode){
 // var draw = SVG('drawing').size("1000", "700")
 var draw = SVG('drawing').size("100%", "100%")
 // pan and zoom
-draw.panZoom({zoomMin: 0.1, zoomMax: 20,zoomFactor:0.2});
+draw.panZoom({zoomMin: 0.1, zoomMax: 10,zoomFactor:0.1});
 
 draw.on('zoom', function( box, focus) {
 	// ev.preventDefault()
@@ -135,28 +134,49 @@ draw.on("contextmenu",function(e){
 	drawingPipeline(x,y);
 
 	// var box = transformFrom(x,y);
-	//console.log(box.x+"--"+box.y);
+	//console.log(box.x+"--"+box.y)
 	// drawingPipeline(box.x,box.y);
 	
 	
 })
 
-
-//底图区域
+//这是底图的测试图片
 var imgArea = draw.group().style({ fill: '#fff' }).style("fill-opacity", 0.3);
 var imageWidth = 800;
 var imageHeight = 600;
-//这是底图的测试图片
 // var image = draw.image('svg270/images/drawing.jpg', imageWidth, imageHeight);
 // var image = draw.image('svg270/images/drawing.jpg');
-// imgArea.add(image);
-//灰度调整区域
-imgArea.rect(imageWidth, imageHeight);
+// // console.log(image);
+// // console.log(image.width());
+var image = draw.image('svg270/images/drawing.jpg').loaded(function(loader) {
+	this.size(loader.width, loader.height);
+	  
+  	//制作底图上面的蒙版，用于调整底图的透明度
+	var rect = imgArea.rect(loader.width, loader.height);
+	/**
+	 * 绑定变形事件
+	 * p = {dx: diffX, dy: diffY, event: event}
+	 */
+	this.on("resizing",function(p){
+		console.log(p.detail);
+		//使蒙版随着 底图的变形而变形
+		rect.size(rect.width()+p.detail.dx,rect.height()+p.detail.dy);
+	});
+})
+imgArea.add(image);
 
+
+
+// imgArea.draggable();
 
 //创建虚线线型 这是 仪表线的 线型
 //参考 https://www.runoob.com/svg/svg-stroke.html
 draw.line(0, 0, 100, 150).stroke({ width: 3 }).attr("stroke-dasharray","10,10");
+
+var circle = draw.circle(100).style("stroke","#f43").style("fill","#f00").style("stroke-width","0.5mm");
+circle.draggable();
+circle.selectize();
+circle.resize();
 
 
 btn();
@@ -322,9 +342,10 @@ function btn() {
 			console.log(item.text);
 			if('放大'==item.text){
 				var transform = draw.select('.selectedObject').members[0].transform();
-				// console.log(transform);
-				draw.select('.selectedObject').scale(transform.scaleX*2,transform.scaleY*2);
-			
+		
+				// draw.select('.selectedObject').scale(transform.scaleX*2,transform.scaleY*2);
+				// transform = draw.select('.selectedObject').members[0]
+				draw.select('.selectedObject').scale(transform.scaleX*2,transform.scaleY*2)
 
 			}else if('缩小'==item.text){
 				var transform = draw.select('.selectedObject').members[0].transform();
@@ -345,15 +366,21 @@ function btn() {
 		onClick:function(){
 			var v = $("#id_btn_lockBackgroundImage").attr("value");
 			if(v==0){
-				imgArea.draggable();
+				
 				$("#id_btn_lockBackgroundImage").attr("value",1).linkbutton({
-					text:'解锁底图'
+					text:'底图已锁定'
 				});
-			}else{
 				imgArea.draggable(false);
+				image.selectize(false);
+				image.resize('stop');
+			}else{
+				
 				$("#id_btn_lockBackgroundImage").attr("value",0).linkbutton({
-					text:'锁定底图'
+					text:'底图已解锁'
 				});
+				imgArea.draggable();
+				image.selectize();
+				image.resize();
 			}
 		}
 	})
@@ -391,7 +418,15 @@ var currentDrawingPipeline = null;
  * 加载图例
  */
 function loadAllLegends(){
-	//var arr = ["sb1","sb2","yb","fm","sb1-note","pl"];
+	//加载图框
+	// loadLegendByUrl("./svg270/legend2/A1（横）图框+图签（SEI）修改mm.svg",function(text){
+	// 	draw.svg(text);
+	// 	var a = SVG.get("demo").attr("id",createUUID());
+		
+	// 	//将外部坐标转换为内部 vbox坐标系
+	// 	// var box = transformFrom(x,y);
+
+	// })
 
 	$("#legend-list li").each(function(){
 
@@ -436,13 +471,12 @@ function loadAllLegends(){
 		}
 		// console.log(currentDragLegendText);
 		draw.svg(currentDragLegendText);
-		var a = SVG.get("demo").attr("id",createUUID());
-		
+	
 		//将外部坐标转换为内部 vbox坐标系
 		var box = transformFrom(x,y);
 
 
-		bindNewLegend(a,box.x,box.y,box.zoom);
+		bindNewLegend(box.x,box.y,box.zoom);
 
 		tip("delte键删除选中对象");
 	}).on("dragover",function(e){
@@ -451,49 +485,32 @@ function loadAllLegends(){
 	
 	
 }
-/**
- * 坐标转换公式
- * from (x,y)-> vbox(x,y)
- */ 
-function transformFrom(x,y){
-	//将外部坐标转换为内部 vbox坐标系
-	var box = draw.viewbox();
-	// console.log(box);
-	var width4Client = $("#drawing").width();
-	var height4Client = $("#drawing").height();
-	
-	//计算图例在 vbox 中的真实坐标
-	var x4Vbox = (box.width/width4Client)*x+box.x;
-	var y4Vbox = (box.height/height4Client)*y+box.y;
-	//计算图例在 vbox 中的缩放比例
-	var zoom = box.zoom;
 
-	return {x:x4Vbox,y:y4Vbox,zoom:zoom}
-
-}
 
 /**
  * 为新的图例绑定事件
  */ 
-function bindNewLegend(g,x,y,zoom){
+function bindNewLegend(x,y,zoom){
+
+	var g = SVG.get("demo").attr("id",createUUID());
+	var group = SVG.get("layer1").attr("id",createUUID());
+	
+	//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度变为0，这样看着和没底色差不多。
+	group.attr("fill","#fff").attr("fill-opacity",0);
 	
 	// console.log(x);
 
 	// 将图例移动到鼠标位置
-	g.translate(x,y);
-	// g.translate(0,0);
-	// g.move(x,y);
-	
-
+	// g.translate(x,y);
+	g.move(x,y);
 
 	//将图例缩放程度和底图的缩放保持一致
-	g.scale(zoom,x,y);
+	// g.scale(zoom,x,y);
 
 	//记录血的教训：必须指定 fill 颜色;不然 fill=none 时 ，移动时必须选中边框才能移动
 	g.draggable();
-	//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度变为0，这样看着和没底色差不多。
-	g.attr("fill","#fff").attr("fill-opacity",0);
 
+	
 	//加入统一的定位信息
 	g.addClass("lengendObject");	
 	
@@ -542,25 +559,52 @@ function bindNewLegend(g,x,y,zoom){
 		currentDrawingPipeline = null;
 	}
 }
+
+/**
+ * 坐标转换公式
+ * from (x,y)-> vbox(x,y)
+ */ 
+ function transformFrom(x,y){
+	//将外部坐标转换为内部 vbox坐标系
+	var box = draw.viewbox();
+	// console.log(box);
+	var width4Client = $("#drawing").width();
+	var height4Client = $("#drawing").height();
+	
+	//计算图例在 vbox 中的真实坐标
+	var x4Vbox = (box.width/width4Client)*x+box.x;
+	var y4Vbox = (box.height/height4Client)*y+box.y;
+	//计算图例在 vbox 中的缩放比例
+	var zoom = box.zoom;
+
+	return {x:x4Vbox,y:y4Vbox,zoom:zoom}
+
+}
 /**
  * 选中
  */
 function selectG(group){
-	var gorupId = group.attr("id");
 	if(isSingleSelected){
 
 		unselectAllGroup();
 		
-		group.attr("stroke",highColor);
-		
 	}
-	//
-	group.addClass("selectedObject");
+	//高亮
+	highlight(group);
+	
 
 	//加入选择的插件
 	// group.selectize();
 	//加入变形的 插件
 	// group.resize();
+}
+
+function highlight(group){
+	var selectedGroup = group.select("g");
+
+	selectedGroup.attr("stroke",highColor);
+	//加入 class 标志	
+	group.addClass("selectedObject");
 
 
 }
@@ -582,10 +626,12 @@ function tip(msg){
  */ 
 function unselectAllGroup(){
 
-	var elements = draw.select('.lengendObject').attr("stroke",defaultColor).removeClass("selectedObject");
-		elements.selectize(false);
-		return elements.resize('stop');
-
+	var elements = draw.select('.lengendObject');
+	
+	draw.select('.lengendObject g').attr("stroke",defaultColor);
+		// elements.selectize(false);
+		// return elements.resize('stop');
+	elements.removeClass("selectedObject");
 }
 
 /**

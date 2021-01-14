@@ -1,31 +1,41 @@
 .svg_select_points_lt{
     cursor: nw-resize;
+    fill:#1470FA;
 }
 .svg_select_points_rt{
     cursor: ne-resize;
+    fill:#1470FA;
 }
 .svg_select_points_rb{
     cursor: se-resize;
+    fill:#1470FA;
 }
 .svg_select_points_lb{
     cursor: sw-resize;
+    fill:#1470FA;
 }
 .svg_select_points_t{
     cursor: n-resize;
+    fill:#1470FA;
 }
 .svg_select_points_r{
     cursor: e-resize;
+    fill:#1470FA;
 }
 .svg_select_points_b{
     cursor: s-resize;
+    fill:#1470FA;
 }
 .svg_select_points_l{
     cursor: w-resize;
+    fill:#1470FA;
 }
 
+/*变形的点*/
 .svg_select_points_rot{
     stroke-width:1;
-    stroke:black;
+    /* stroke:black; */
+    stroke:#1470FA;
     fill: #F9FFED;
 }
 
@@ -35,9 +45,12 @@
 
 .svg_select_boundingRect{
     stroke-width:1;
-    fill:gray;
+    /*修改选中的颜色*/
+    /* fill:gray; */
+    fill:#F9FFED;
     stroke-dasharray:10 10;
-    stroke:black;
+    /* stroke:black; */
+    stroke:#1470FA;
     stroke-opacity:0.8;
     fill-opacity:0.1;
     pointer-events:none; /* This ons is needed if you want to deselect or drag the shape*/

@@ -1,0 +1,44 @@
+
+  <g
+fill="none"
+   stroke="#000"
+     id="layer1">
+    <path
+       style="stroke-width:0.5mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1.7372519,9.9336096 c 3.2091041,-12.8610803 14.8743141,-11.2258012 18.0406931,0 V 90.203463 c -1.551629,9.815097 -13.027973,15.065557 -18.5752321,0 z"
+       id="path28"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="stroke-width:0.25mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 1.7372519,17.372519 H 19.510675"
+       id="path30" />
+    <path
+       style="stroke-width:0.25mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 1.2027129,81.650839 H 19.777945"
+       id="path32" />
+    <path
+       style="stroke-width:0.25mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 10.423511,17.238884 V 81.650839"
+       id="path34" />
+    <path
+       style="stroke-width:0.25mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1.7372519,17.372519 v 0 0"
+       id="path36" />
+    <path
+       style="stroke-width:0.25mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 4.2094951,17.439337 V 81.73735"
+       id="path38" />
+    <path
+       style="stroke-width:0.25mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 7.4650297,17.292411 V 81.73735"
+       id="path40" />
+    <path
+       style="stroke-width:0.25mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 13.512649,17.292411 V 81.359374"
+       id="path42" />
+    <path
+       style="stroke-width:0.25mm;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 16.81994,17.292411 V 81.548363"
+       id="path44" />
+  </g>
+</svg>
