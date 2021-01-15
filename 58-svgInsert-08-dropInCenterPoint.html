@@ -202,6 +202,7 @@ imgArea.add(image);
 draw.line(0, 0, 100, 150).stroke({ width: "0.5mm" }).attr("stroke-dasharray","10,10");
 
 var circle = draw.circle(100).style("stroke","#f43").style("fill","none").style("stroke-width","0.5mm");
+console.log(circle.transform());
 circle.draggable();
 circle.selectize();
 circle.resize();
@@ -534,9 +535,12 @@ function loadAllLegends(){
 function bindNewLegend(x,y,zoom){
 
 	var g = SVG.get("demo").attr("id",createUUID());
-	console.log(g.transform());
+	// console.log("--");
+	// console.log(g.transform());
 	
+
 	if("pl"===g.attr("legendtype")){
+
 		newPipeline(g,x,y,zoom);
 		return;
 	}
