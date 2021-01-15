@@ -35,8 +35,11 @@
 </style>
 
 <!-- 
-	这个案例，使用 mm 标准图例，且包含 <svg></svg>，测试加入单位 和不加单位的区别。
-	结论：尺寸无影响，但某些超出范围的图例，会显示范围有细微差异
+	1. 图例加入方式采用 <svg>
+	2. 管线加入方式采用 <g>
+	
+	新特性：
+	a. 新增 管线高亮和管线删除，使用方式的上和普通图例保持一致
 -->
 <body>
 	<div style="float:left;margin-right: 50px;">
@@ -223,6 +226,7 @@ function drawingPipeline(x,y){
 	var x1 = line.attr("x1");
 	var y1 = line.attr("y1");
 	var t = Math.abs(y-y1)>Math.abs(x-x1);
+
 	// console.log(t);
 	if(t){ //y的距离大于x，说明是垂直线
 		line.attr({x2:x1,y2:y});
@@ -673,6 +677,20 @@ function selectG(group){
 }
 
 function highlight(group){
+
+	/**
+	 * 目前只有管线未使用 <svg>嵌入方式，而依然采用 <g>嵌入。
+	 * 故高亮逻辑需要单独处理
+	 */ 
+	if("pl"===group.attr("legendtype")){
+		
+		group.attr("stroke",highColor);
+		//加入 class 标志	
+		group.addClass("selectedObject");
+
+		return;
+	}
+
 	var selectedGroup = group.select("g");
 
 	selectedGroup.attr("stroke",highColor);
