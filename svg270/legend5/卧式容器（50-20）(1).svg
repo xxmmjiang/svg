@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="177.16534mm"
+   height="70.866142mm"
+   id="demo"
+   version="1.1">
+  <g
+
+     id="layer1"
+     stroke="#000"
+     fill="none"
+     transform="translate(0,-981.49604)">
+    <path
+       style="stroke-width:1.77165;stroke-linejoin:bevel;stroke-miterlimit:4.75;stroke-dasharray:none;stroke-opacity:1"
+       d="M 29.015882,1036.7812 H 151.24447"
+       id="path3007"
+       inkscape:connector-curvature="0" />
+    <path
+       style="stroke-width:1.77165;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4.75;stroke-dasharray:none;stroke-opacity:1"
+       d="m 29.259742,1036.7455 a 36.404857,35.636066 0 0 0 0,68.4213"
+       id="path3009"
+       inkscape:connector-curvature="0" />
+    <path
+       style="stroke-width:1.77165;stroke-miterlimit:4.75;stroke-dasharray:none;stroke-opacity:1"
+       d="m 151.00981,1105.1548 a 36.404857,35.636066 0 0 0 0,-68.4212"
+       id="path3011"
+       inkscape:connector-curvature="0" />
+    <path
+       style="stroke-width:1.77165;stroke-miterlimit:4.75;stroke-dasharray:none;stroke-opacity:1"
+       d="M 29.010603,1105.1371 H 151.30163"
+       id="path3013"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 29.015882,1036.7812 c 0.24386,68.3856 0.24386,68.3856 0.24386,68.3856"
+       id="path34" />
+  </g>
+</svg>
