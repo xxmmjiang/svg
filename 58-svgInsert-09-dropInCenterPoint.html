@@ -30,7 +30,10 @@
 		cursor: pointer;
 	}
 	
-	
+	/*高亮效果*/
+	.highlight{
+		stroke:#1470FA;
+	}
 	
 </style>
 
@@ -43,6 +46,7 @@
 	2. 普通图例的缩放（scale）
 	3. 普通图例的旋转（rotate）,需要注意的是，必须图例在 Inkscape 绘制时，要经过90旋转测试，保证图例时旋转时是完整的。
 	图例请参考 /legend2/卧式容器（50-20）(1).svg 或 /legend2/列管换热器（20-100）.svg
+	
 	4. 拖放图例时，图例的放置位置是鼠标位置，且使鼠标位置为图例中心点位置。
 -->
 <body>
@@ -58,7 +62,7 @@
 	
 	<div style="float:left;">
 		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
-		<div id="drawing" style="float:left;border:2px solid green;width: 1000px;height: 800px;">
+		<div id="drawing" style="float:left;border:2px solid green;width: 1200px;height: 800px;">
 			
 		</div>
 	</div>
@@ -97,7 +101,7 @@
  * 全局参数
 */
 var currentDragLegendText = null;
-var highColor = "#1470FA";
+// var highColor = "#1470FA";
 var defaultColor = "#000";
 
 /**
@@ -127,8 +131,8 @@ if(46==e.keyCode){
 })
 
 
-// var draw = SVG('drawing').size("1000", "700")
-var draw = SVG('drawing').size("100%", "100%")
+// var draw = SVG('drawing').size("1000", "700");
+var draw = SVG('drawing').size("100%", "100%");
 // pan and zoom
 draw.panZoom({zoomMin: 0.1, zoomMax: 10,zoomFactor:0.1});
 
@@ -535,8 +539,9 @@ function loadAllLegends(){
 function bindNewLegend(x,y,zoom){
 
 	var g = SVG.get("demo").attr("id",createUUID());
+
 	// console.log("--");
-	// console.log(g.transform());
+
 	
 
 	if("pl"===g.attr("legendtype")){
@@ -546,6 +551,8 @@ function bindNewLegend(x,y,zoom){
 	}
 
 	var group = SVG.get("layer1").attr("id",createUUID());
+
+	console.log(group.svg());
 
 	//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度变为0，这样看着和没底色差不多。
 	group.attr("fill","#fff").attr("fill-opacity",0);
@@ -718,7 +725,9 @@ function highlight(group){
 	 */ 
 	if("pl"===group.attr("legendtype")){
 		
-		group.attr("stroke",highColor);
+		//高亮
+		group.addClass("highlight");
+
 		//加入 class 标志	
 		group.addClass("selectedObject");
 
@@ -727,7 +736,9 @@ function highlight(group){
 
 	var selectedGroup = group.select("g");
 
-	selectedGroup.attr("stroke",highColor);
+	//高亮
+	// selectedGroup.attr("stroke",highColor);
+	selectedGroup.addClass("highlight");
 	//加入 class 标志	
 	group.addClass("selectedObject");
 
@@ -753,7 +764,13 @@ function unselectAllGroup(){
 
 	var elements = draw.select('.lengendObject');
 	
-	draw.select('.lengendObject g').attr("stroke",defaultColor);
+	//移除图例的高亮
+	// draw.select('.lengendObject g').attr("stroke",defaultColor);
+	draw.select('.lengendObject g').removeClass("highlight");
+
+	//移除管线的高亮
+	elements.removeClass("highlight");
+
 		// elements.selectize(false);
 		// return elements.resize('stop');
 	elements.removeClass("selectedObject");

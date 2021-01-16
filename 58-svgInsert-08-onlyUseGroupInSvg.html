@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li{
+		margin-bottom: 20px;
+		cursor: pointer;
+	}
+	
+	
+	
+</style>
+
+<!-- 
+	1. 普通图例加入方式采用 <svg>
+	2. 管线加入方式采用 <g>
+	
+	特性：
+	1. 新增 管线高亮和管线删除，使用方式的上和普通图例保持一致
+	2. 普通图例的缩放（scale）
+	3. 普通图例的旋转（rotate）,需要注意的是，必须图例在 Inkscape 绘制时，要经过90旋转测试，保证图例时旋转时是完整的。
+	图例请参考 /legend2/卧式容器（50-20）(1).svg 或 /legend2/列管换热器（20-100）.svg
+	
+	4. 剔除图例中的 <svg> 仅仅使用里面的 <g>，缺点 也很明显，无法解决<g>内部的坐标问题。
+-->
+<body>
+	<div style="float:left;margin-right: 50px;">
+		<a>底图透明度：</a><div id="id_image_opacity" style="width:200px"></div>
+		<a id="id_btn_zoom" href="#">归位</a> 
+		<a id="id_btn_panZoomFalse" href="#" value="0">禁用平移画布</a> <br />
+		<a>图例放大：</a><div id="id_btn_scaleBig" style="width:200px"></div>
+		<a>图例缩小：</a><div id="id_btn_scaleSmall" style="width:200px"></div>
+		<a id="id_btn_clearAllSelected" href="#">清除选择</a> 
+		<a id="id_btn_lockBackgroundImage" href="#" value="1">底图已锁定</a> 
+	</div>
+	
+	<div style="float:left;">
+		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
+		<div id="drawing" style="float:left;border:2px solid green;width: 1000px;height: 800px;">
+			
+		</div>
+	</div>
+	
+	<div style="float: left;margin-left: 10px;">
+			<a href="#">我是图例库</a>
+			<div style="width:100px;height:500px;border:1px solid green;">
+				<ul id="legend-list">
+
+
+					<li value="legend2/截止阀（10-4）.svg" draggable="true">截止阀（10-4）.svg</li>
+					<li value="legend2/列管换热器（20-100）.svg" draggable="true">列管换热器（20-100）.svg</li>
+					<li value="legend2/卧式容器（50-20）(1).svg" draggable="true">卧式容器（50-20）(1).svg</li>
+					<li value="legend2/压力表（10）(1).svg" draggable="true">压力表（10）(1).svg</li>
+					<li value="legend2/pl-2.svg" draggable="true">pl-2.svg</li>
+			
+				</ul>
+			</div>
+	</div>
+
+	<!-- 通用图例的右键菜单-->
+	<div id="mm" class="easyui-menu" style="width:120px;">   
+		<div data-options="iconCls:'icon-add'">放大</div>   
+		<div data-options="iconCls:'icon-save'">缩小</div>   
+		<div data-options="iconCls:'icon-search'">旋转</div>    
+	</div> 
+	<!-- 管线图例右键菜单-->
+	<div id="id_mm_pipeline_rightMenu" class="easyui-menu" style="width:120px;">   
+		<div>结束绘制</div>
+	</div>
+</body>
+
+<script>
+
+/**
+ * 全局参数
+*/
+var currentDragLegendText = null;
+var highColor = "#1470FA";
+var defaultColor = "#000";
+
+/**
+ * 是否为单选
+ */
+var isSingleSelected = true;
+
+/**
+ * 正在画管线
+ */ 
+var currentDrawingPipeline = null;
+
+//全局键盘事件
+$(document).on("keyup",function(e){
+
+//删除选中的对象
+if(46==e.keyCode){
+	
+	var els = draw.select(".selectedObject");
+	if(els.members.length<=0){
+		return;
+	}
+	for(var i in els.members){
+		els.members[i].remove();
+	}
+}
+})
+
+
+// var draw = SVG('drawing').size("1000", "700")
+var draw = SVG('drawing').size("100%", "100%")
+// pan and zoom
+draw.panZoom({zoomMin: 0.1, zoomMax: 10,zoomFactor:0.1});
+
+draw.on('zoom', function( box, focus) {
+	// ev.preventDefault()
+	//图纸放大和缩小会触发
+	//console.log(box)
+	//console.log(focus)
+})
+// var defaultZoom = draw.zoom(1);
+
+/**
+ * 绑定右击事件
+ */ 
+draw.on("contextmenu",function(e){
+	e.preventDefault();
+	//结束管线绘制
+	currentDrawingPipeline = null;
+});
+
+/**
+ * 整个画布的点击事件
+ */ 
+ draw.click(function(e){
+	var x = e.offsetX;
+	var y = e.offsetY;
+	
+
+	// drawingPipeline(x,y);
+	//必须经过坐标转换，转换为 vbox 内坐标
+	var box = transformFrom(x,y);
+	//console.log(box.x+"--"+box.y);
+
+	drawingPipeline(box.x,box.y);
+	
+	
+})
+
+
+//这是底图的测试图片
+var imgArea = draw.group().style({ fill: '#fff' }).style("fill-opacity", 0.3);
+var imageWidth = 800;
+var imageHeight = 600;
+// var image = draw.image('svg270/images/drawing.jpg', imageWidth, imageHeight);
+// var image = draw.image('svg270/images/drawing.jpg');
+// // console.log(image);
+// // console.log(image.width());
+var image = draw.image('svg270/images/drawing.jpg').loaded(function(loader) {
+	this.size(loader.width, loader.height);
+	  
+  	//制作底图上面的蒙版，用于调整底图的透明度
+	var rect = imgArea.rect(loader.width, loader.height);
+	/**
+	 * 绑定变形事件,使遮罩层随着图片变形而变形
+	 * p = {dx: diffX, dy: diffY, event: event}
+	 */
+	this.on("resizing",function(p){
+		console.log(p.detail);
+		//使蒙版随着 底图的变形而变形
+		rect.size(rect.width()+p.detail.dx,rect.height()+p.detail.dy);
+	});
+})
+imgArea.add(image);
+
+
+
+// imgArea.draggable();
+
+//创建虚线线型 这是 仪表线的 线型
+//参考 https://www.runoob.com/svg/svg-stroke.html
+draw.line(0, 0, 100, 150).stroke({ width: "0.5mm" }).attr("stroke-dasharray","10,10");
+
+var circle = draw.circle(100).style("stroke","#f43").style("fill","none").style("stroke-width","0.5mm");
+console.log(circle.transform());
+circle.draggable();
+circle.selectize();
+circle.resize();
+
+//渲染按钮
+btn();
+//初始化 所有图例列表
+loadAllLegends();
+
+/**
+ * 绘制管线
+ */ 
+function drawingPipeline(x,y){
+	console.log(x+"--"+y)
+	/**
+	 * 画管线的逻辑
+	 */ 
+	 if(!currentDrawingPipeline){
+		return;
+	}
+	var lines = currentDrawingPipeline.select("line.uncomplete");
+	// console.log(els.length());
+	if(lines.members.length<=0){
+		return;
+	}
+	var line = lines.members[0];
+	var x1 = line.attr("x1");
+	var y1 = line.attr("y1");
+	var t = Math.abs(y-y1)>Math.abs(x-x1);
+
+	// console.log(t);
+	if(t){ //y的距离大于x，说明是垂直线
+		line.attr({x2:x1,y2:y});
+	}else{//反之，说明是水平线
+		line.attr({x2:x,y2:y1});
+	}
+	
+	line.removeClass("uncomplete");
+
+	var x2 = line.attr("x2");
+	var y2 = line.attr("y2");
+	var newline = line.clone().plot(x2,y2,x2,y2).addClass("uncomplete");
+	currentDrawingPipeline.add(newline);
+	
+	//处理箭头方向和位置
+	var arrow = currentDrawingPipeline.select("image").members[0].move(x2,y2);
+
+	if(t){//垂直线
+		if(y>y1){
+			arrow.load("svg270/images/D.png")
+		}else{
+			arrow.load("svg270/images/U.png")
+		}
+		
+	}else{//水平线
+		if(x>=x1){
+			arrow.load("svg270/images/R.png")
+		}else{
+			arrow.load("svg270/images/L.png")
+		}
+	}
+}
+
+
+function btn() {
+
+	//底图透明度按钮
+	$('#id_image_opacity').slider({
+		mode: 'h', //声明滚动条类型。可用值有：'h'(水平)、'v'(垂直)。   
+		min: 0,
+		max: 1,
+		step: 0.01,
+		value:0.3,
+		tipFormatter: function (value) {
+			return value + '%';
+		},
+		onChange: function (newValue, oldValue) {
+			imgArea.style("fill-opacity", newValue);
+
+			// var elements = draw.select('.lengendObject');
+			// elements.transform("scale",newValue*10);
+			
+		}
+
+	});
+	//图例放大按钮
+	$('#id_btn_scaleBig').slider({
+		mode: 'h', //声明滚动条类型。可用值有：'h'(水平)、'v'(垂直)。   
+		min: 1,
+		max: 100,
+		step: 1,
+		value:1,
+		tipFormatter: function (value) {
+			return value + '倍';
+		},
+		onChange: function (newValue, oldValue) {
+			
+			var selectedObjects = draw.select(".selectedObject");
+			selectedObjects.scale(newValue);
+			
+			
+			// console.log(newValue);
+		}
+
+	});
+	//
+	//图例缩小按钮
+	$('#id_btn_scaleSmall').slider({
+		mode: 'h', //声明滚动条类型。可用值有：'h'(水平)、'v'(垂直)。   
+		min: 0.01,
+		max: 1,
+		step: 0.01,
+		value:1,
+		tipFormatter: function (value) {
+			return value + '倍';
+		},
+		onChange: function (newValue, oldValue) {
+			
+			var selectedObjects = draw.select(".selectedObject");
+			selectedObjects.scale(newValue);
+			
+			
+			// console.log(newValue);
+		}
+
+	});
+
+	//zoom 
+	$("#id_btn_zoom").linkbutton({
+		
+		onClick:function(){
+			draw.zoom(defaultZoom);
+		}
+	})
+	
+	//禁止或开启【平移画布】
+	$("#id_btn_panZoomFalse").linkbutton({
+		
+		onClick:function(){
+			var v = $("#id_btn_panZoomFalse").attr("value");
+			if(v==0){
+				draw.panZoom(false);
+				$("#id_btn_panZoomFalse").attr("value",1).linkbutton({
+					text:'启用平移画布'
+				});
+			}else{
+				draw.panZoom(true);
+				$("#id_btn_panZoomFalse").attr("value",0).linkbutton({
+					text:'禁用平移画布'
+				});
+			}
+		}
+	})
+	
+	//清除选择
+	$("#id_btn_clearAllSelected").linkbutton({
+		
+		onClick:function(){
+			unselectAllGroup();
+		}
+	})
+
+	//初始化右键菜单的事件
+	$('#mm').menu({    
+		onClick:function(item){    
+			//...    
+			console.log(item.text);
+			if('放大'==item.text){
+
+				//<svg> 的变化
+				var svgObject = draw.select('.selectedObject').members[0];
+				//存在单位，必须将单位剔除才能运算
+				var unit = "mm";
+				var width = svgObject.width().replace(unit,"");
+				var height = svgObject.height().replace(unit,"");
+				svgObject.size(width*2+unit,height*2+unit);
+
+
+				//<g> 内的变化
+				var gObject = draw.select('.selectedObject g').members[0];
+				var transform = gObject.transform();	
+				
+				gObject.translate(transform.x+width/2,transform.y+height/2);
+				gObject.scale(transform.scaleX*2,transform.scaleY*2);
+			
+
+			}else if('缩小'==item.text){
+				//<svg> 的变化
+					var svgObject = draw.select('.selectedObject').members[0];
+				//存在单位，必须将单位剔除才能运算
+				var unit = "mm";
+				var width = svgObject.width().replace(unit,"");
+				var height = svgObject.height().replace(unit,"");
+				svgObject.size(width/2+unit,height/2+unit);
+
+
+				//<g> 内的变化
+				var transform = draw.select('.selectedObject g').members[0].transform();
+				draw.select('.selectedObject g').scale(transform.scaleX/2,transform.scaleY/2);
+
+			}else if('旋转'==item.text){
+
+				var gObject = draw.select('.selectedObject g').members[0];
+				var transform = gObject.transform();
+				console.log(transform.cx);
+				gObject.rotate(transform.rotation+90);
+			}
+		}    
+	});
+	
+	//锁定底图
+	$("#id_btn_lockBackgroundImage").linkbutton({
+		onClick:function(){
+			var v = $("#id_btn_lockBackgroundImage").attr("value");
+			if(v==0){
+				
+				$("#id_btn_lockBackgroundImage").attr("value",1).linkbutton({
+					text:'底图已锁定'
+				});
+				imgArea.draggable(false);
+				image.selectize(false);
+				image.resize('stop');
+			}else{
+				
+				$("#id_btn_lockBackgroundImage").attr("value",0).linkbutton({
+					text:'底图已解锁'
+				});
+				imgArea.draggable();
+				image.selectize();
+				image.resize();
+			}
+		}
+	})
+
+	
+	//初始化右键菜单的事件
+	$('#id_mm_pipeline_rightMenu').menu({    
+		onClick:function(item){    
+			//...    
+			// console.log(item.text);
+			if('结束绘制'==item.text){
+				//终止画管线
+				currentDrawingPipeline= null;
+
+			}
+		}    
+	});
+
+}
+
+
+/**
+ * 加载图例
+ */
+function loadAllLegends(){
+	//加载图框
+	loadLegendByUrl("./svg270/legend2/A1（横）图框+图签（SEI）修改mm.svg",function(text){
+		draw.svg(text);
+		var a = SVG.get("demo").attr("id",createUUID());
+		
+		//将外部坐标转换为内部 vbox坐标系
+		// var box = transformFrom(x,y);
+
+	})
+
+	$("#legend-list li").each(function(){
+
+		var _this = this;
+		var v = $(this).attr("value");
+		if(v=="#"){
+			return;
+		}
+
+
+		var url = "./svg270/"+v;
+
+		loadLegendByUrl(url,function(text){
+			// console.log(text);
+			$(_this).data("svgData",text);
+		})
+		
+		//点击右侧的图例列表
+		$(this).click(function(){
+			// var v= $(_this).data("svgData");
+			// console.log(v);
+		})
+		//拖拽时，离开容器范围时触发
+		$(this).on("dragstart",function(e){
+			var text= $(_this).data("svgData");
+			currentDragLegendText = text;
+		}).on("dragover",function(e){
+			return false;
+		})
+		
+	})
+
+	//放置图例时的触发事件
+	//svg 元素不支持 拖拽的所有事件
+	$("#drawing").on("drop",function(e){
+		var x = e.offsetX;
+		var y = e.offsetY;
+
+		if(!currentDragLegendText){
+			return;
+		}
+		// console.log(currentDragLegendText);
+		draw.svg(currentDragLegendText);
+
+		//图例最外层
+		var outerSvg = SVG.get("demo").attr("id",createUUID());
+		//提取里面的 <g>
+		var g = SVG.get("layer1");
+		
+		//克隆 <g>
+		var newG = g.clone().attr("id",createUUID());
+		draw.add(newG);
+		//删除原来的元素
+		outerSvg.remove();
+		// console.log(g.svg());
+
+		//将外部坐标转换为内部 vbox坐标系
+		var box = transformFrom(x,y);
+
+		//求解 图例在 vbox 内的中心坐标
+		// console.log(box);
+
+		bindNewLegend(newG,box.x,box.y,box.zoom);
+
+	}).on("dragover",function(e){
+		return false;
+	})
+
+
+	
+}
+
+
+/**
+ * 为新的图例绑定事件
+ */ 
+function bindNewLegend(g,x,y,zoom){
+
+	if("pl"===g.attr("legendtype")){
+
+		newPipeline(g,x,y,zoom);
+		return;
+	}
+	//由于由底色，图例可以按住任意点拖拽，很方便，故为图例加个底色，将透明度变为0，这样看着和没底色差不多。
+	g.attr("fill","#fff").attr("fill-opacity",0);
+	
+	
+	// console.log(x);
+
+	// 将图例移动到鼠标位置
+	g.translate(x,y);
+	// g.move(x,y);
+
+	//将图例缩放程度和底图的缩放保持一致
+	// g.scale(zoom,x,y);
+
+	//记录血的教训：必须指定 fill 颜色;不然 fill=none 时 ，移动时必须选中边框才能移动
+	g.draggable();
+
+	
+	//加入统一的定位信息
+	g.addClass("lengendObject");	
+	
+	//左键单击
+	g.click(function(){
+		
+		selectG(this);
+		
+	});
+	//右击单击
+	g.on("contextmenu",function(e){
+		e.preventDefault();
+		selectG(this);
+		
+		if(currentDrawingPipeline){
+			//显示菜单
+			$('#id_mm_pipeline_rightMenu').menu('show', {    
+				left: e.clientX,    
+				top: e.clientY    
+			});
+		}else{
+			//显示菜单
+			$('#mm').menu('show', {    
+				left: e.clientX,    
+				top: e.clientY    
+			});
+		}
+		
+	})
+	//图例的悬浮事件，这个事件用于未来和其他图例的事件交互
+	//当鼠标进入图例时，触发该事件，比如用于 锚点显示
+	g.on("mouseover",function(e2){
+		var x = e2.clientX;
+		var y = e2.clientY;
+		console.log(x+"#"+y);
+
+	})
+
+
+	//默认选中
+	selectG(g);
+
+	//停止绘制管线
+	currentDrawingPipeline = null;
+	tip("delte键删除选中对象");
+}
+
+
+/**
+ * 管线
+ */ 
+function newPipeline(g,x,y,zoom){
+
+
+	//将图例缩放程度和底图的缩放保持一致
+	// g.scale(zoom,x,y);
+
+	//记录血的教训：必须指定 fill 颜色;不然 fill=none 时 ，移动时必须选中边框才能移动
+	// g.draggable();
+
+
+	//加入统一的定位信息
+	g.addClass("lengendObject");	
+
+	//左键单击
+	g.click(function(){
+		
+		selectG(this);
+		
+	});
+	//右击单击
+	g.on("contextmenu",function(e){
+		e.preventDefault();
+		selectG(this);
+		
+		if(currentDrawingPipeline){
+			//显示菜单
+			$('#id_mm_pipeline_rightMenu').menu('show', {    
+				left: e.clientX,    
+				top: e.clientY    
+			});
+		}else{
+			//显示菜单
+			$('#mm').menu('show', {    
+				left: e.clientX,    
+				top: e.clientY    
+			});
+		}
+		
+	}).on("mouseover",function(e2){
+		var x = e2.clientX;
+		var y = e2.clientY;
+		console.log(x+"#"+y);
+
+	})
+
+
+	var line = g.children();
+	line[0].plot(x-100, y, x, y);
+
+		currentDrawingPipeline = g;
+		// g.select("image").move(x,y);
+
+		//提示信息
+		tip("左键点击绘制管线，右击结束绘制。");
+}
+
+/**
+ * 坐标转换公式
+ * from (x,y)-> vbox(x,y)
+ */ 
+ function transformFrom(x,y){
+	//将外部坐标转换为内部 vbox坐标系
+	var box = draw.viewbox();
+	// console.log(box);
+	var width4Client = $("#drawing").width();
+	var height4Client = $("#drawing").height();
+	
+	//计算图例在 vbox 中的真实坐标
+	var x4Vbox = (box.width/width4Client)*x+box.x;
+	var y4Vbox = (box.height/height4Client)*y+box.y;
+	//计算图例在 vbox 中的缩放比例
+	var zoom = box.zoom;
+
+	return {x:x4Vbox,y:y4Vbox,zoom:zoom}
+
+}
+/**
+ * 选中
+ */
+function selectG(group){
+	if(isSingleSelected){
+
+		unselectAllGroup();
+		
+	}
+	//高亮
+	highlight(group);
+	
+
+	//加入选择的插件
+	// group.selectize();
+	//加入变形的 插件
+	// group.resize();
+}
+
+function highlight(group){
+
+	/**
+	 * 目前只有管线未使用 <svg>嵌入方式，而依然采用 <g>嵌入。
+	 * 故高亮逻辑需要单独处理
+	 */ 
+	if("pl"===group.attr("legendtype")){
+		
+		group.attr("stroke",highColor);
+		//加入 class 标志	
+		group.addClass("selectedObject");
+
+		return;
+	}
+
+	var selectedGroup = group.select("g");
+
+	selectedGroup.attr("stroke",highColor);
+	//加入 class 标志	
+	group.addClass("selectedObject");
+
+
+}
+
+/**
+ * 提示信息
+ */ 
+function tip(msg){
+	$.messager.show({
+		title:'我的消息',
+		msg:msg,
+		timeout:5000,
+		showType:'slide'
+	});
+
+}
+/**
+ * 取消高亮
+ */ 
+function unselectAllGroup(){
+
+	var elements = draw.select('.lengendObject');
+	
+	draw.select('.lengendObject g').attr("stroke",defaultColor);
+		// elements.selectize(false);
+		// return elements.resize('stop');
+	elements.removeClass("selectedObject");
+}
+
+/**
+ * 加载图例
+ */
+function loadLegendByUrl(url,callback){
+
+
+	$.post(url, {}, function (data) {	
+
+		if($.isFunction(callback)){
+			callback(data);
+		}
+	}, "text");
+}
+
+function createUUID(){
+	var x= 13*Math.floor(Math.random()*1000)+"-"+7*Math.floor(Math.random()*100);  
+	return "id_"+x;
+}
+/**
+ * 生成随机颜色
+ */
+function getRandomColor(){
+	var x= Math.floor(Math.random()*9)+""+Math.floor(Math.random()*9)+""+Math.floor(Math.random()*9);  
+	return "#"+x;
+}
+</script>
+
+</html>
