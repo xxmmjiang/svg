@@ -128,17 +128,17 @@ var currentDrawingPipeline = null;
 //全局键盘事件
 $(document).on("keyup",function(e){
 
-	//删除选中的对象
-	if(46==e.keyCode){
-		
-		var els = draw.select(".selectedObject");
-		if(els.members.length<=0){
-			return;
-		}
-		for(var i in els.members){
-			els.members[i].remove();
-		}
+//删除选中的对象
+if(46==e.keyCode){
+	
+	var els = draw.select(".selectedObject");
+	if(els.members.length<=0){
+		return;
 	}
+	for(var i in els.members){
+		els.members[i].remove();
+	}
+}
 })
 
 
@@ -183,30 +183,30 @@ draw.on("contextmenu",function(e){
 })
 
 
-//这是底图的测试图片
-var imgArea = draw.group().style({ fill: '#fff' }).style("fill-opacity", 0.3);
-var imageWidth = 800;
-var imageHeight = 600;
-// var image = draw.image('svg270/images/drawing.jpg', imageWidth, imageHeight);
-// var image = draw.image('svg270/images/drawing.jpg');
-// // console.log(image);
-// // console.log(image.width());
-var image = draw.image('svg270/images/drawing.jpg').loaded(function(loader) {
-	this.size(loader.width, loader.height);
+// //这是底图的测试图片
+// var imgArea = draw.group().style({ fill: '#fff' }).style("fill-opacity", 0.3);
+// var imageWidth = 800;
+// var imageHeight = 600;
+// // var image = draw.image('svg270/images/drawing.jpg', imageWidth, imageHeight);
+// // var image = draw.image('svg270/images/drawing.jpg');
+// // // console.log(image);
+// // // console.log(image.width());
+// var image = draw.image('svg270/images/drawing.jpg').loaded(function(loader) {
+// 	this.size(loader.width, loader.height);
 	  
-  	//制作底图上面的蒙版，用于调整底图的透明度
-	var rect = imgArea.rect(loader.width, loader.height);
-	/**
-	 * 绑定变形事件,使遮罩层随着图片变形而变形
-	 * p = {dx: diffX, dy: diffY, event: event}
-	 */
-	this.on("resizing",function(p){
-		console.log(p.detail);
-		//使蒙版随着 底图的变形而变形
-		rect.size(rect.width()+p.detail.dx,rect.height()+p.detail.dy);
-	});
-})
-imgArea.add(image);
+//   	//制作底图上面的蒙版，用于调整底图的透明度
+// 	var rect = imgArea.rect(loader.width, loader.height);
+// 	/**
+// 	 * 绑定变形事件,使遮罩层随着图片变形而变形
+// 	 * p = {dx: diffX, dy: diffY, event: event}
+// 	 */
+// 	this.on("resizing",function(p){
+// 		console.log(p.detail);
+// 		//使蒙版随着 底图的变形而变形
+// 		rect.size(rect.width()+p.detail.dx,rect.height()+p.detail.dy);
+// 	});
+// })
+// imgArea.add(image);
 
 
 
