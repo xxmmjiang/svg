@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li{
+		margin-bottom: 20px;
+		cursor: pointer;
+	}	
+	/*高亮效果*/
+	.highlight{
+		stroke:#1470FA;
+	}
+	
+</style>
+
+<!-- 
+
+-->
+<body>
+	<div style="float:left;margin-right: 50px;">
+		<input id="id-text" class="easyui-textbox" data-options="iconCls:'icon-search'" style="width:300px"> 
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="changeText()">changeText</a> 
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="clearText()">clearText</a> 
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="changeColor()">changeColor</a>
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="changeSize()">changeSize</a>
+
+	</div>
+	
+	<div style="float:left;">
+		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
+		<div id="drawing" style="border:2px solid green;width: 800px;height: 600px;">
+			
+		</div>
+		<div id="drawing-copy" style="border:2px solid gold;width: 400px;height: 300px;">
+
+		</div>
+	</div>
+	
+
+
+</body>
+
+<script>
+
+// var draw = SVG('drawing').size("1000", "700");
+var draw = SVG('drawing').size("100%", "100%");
+// pan and zoom
+draw.panZoom({zoomMin: 0.1, zoomMax: 10,zoomFactor:0.1});
+
+//创建虚线线型 这是 仪表线的 线型
+//参考 https://www.runoob.com/svg/svg-stroke.html
+draw.line(0, 0, 100, 150).stroke({ width: "0.5mm" }).attr("stroke-dasharray","10,10");
+
+//将填充色 设为白色，同时将 透明度设为 0，可以在没有颜色的同时，实现拖动
+var circle = draw.circle(100).style("stroke","#f43").style("fill","#fff").style("fill-opacity",0).style("stroke-width","0.5mm");
+// console.log(circle.transform());
+var tem = circle.style();
+console.log(typeof circle.style());
+
+
+var t = draw.text("aaa").move(100,100);
+
+/**
+ * 涂改文字
+ */
+function changeText(){
+	var v = $("#id-text").textbox("getValue");
+	// alert(v);
+	t.text(v);
+}
+
+/**
+ * 清空文字
+ */ 
+function clearText(){
+	t.clear();
+}
+/**
+ * 变色
+ */ 
+function changeColor(){
+	t.style("fill",getRandomColor());
+}
+
+function changeSize(){
+	var a = Math.floor(Math.random()*100);
+	t.font("size",a);
+}
+
+/**
+ * 加载图例
+ */
+function loadLegendByUrl(url,callback){
+
+
+	$.post(url, {}, function (data) {	
+
+		if($.isFunction(callback)){
+			callback(data);
+		}
+	}, "text");
+}
+
+function createUUID(){
+	var x= 13*Math.floor(Math.random()*1000)+"-"+7*Math.floor(Math.random()*100);  
+	return "id_"+x;
+}
+/**
+ * 生成随机颜色
+ */
+function getRandomColor(){
+	var x= getRandomInteger();  
+	return "#"+x;
+}
+/**
+ * 生成随机数
+ */ 
+function getRandomInteger(){
+	var x= Math.floor(Math.random()*9)+""+Math.floor(Math.random()*9)+""+Math.floor(Math.random()*9);  
+	return x;
+}
+</script>
+
+</html>
