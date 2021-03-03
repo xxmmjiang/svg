@@ -45,6 +45,15 @@
 		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="changeColor()">changeColor</a>
 		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="changeSize()">changeSize</a>
 
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="loadLegend()">loadLegend</a>
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="newText()">newText</a>
+		<br />
+		<input id="id-x" class="easyui-numberbox" data-options="iconCls:'icon-search'" style="width:100px"> 
+		<input id="id-y" class="easyui-numberbox" data-options="iconCls:'icon-search'" style="width:100px"> 
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="moveText()">moveText</a>
+
+
+
 	</div>
 	
 	<div style="">
@@ -74,7 +83,10 @@ draw.line(0, 0, 100, 150).stroke({ width: "0.5mm" }).attr("stroke-dasharray","10
 var circle = draw.circle(100).style("stroke","#f43").style("fill","#fff").style("fill-opacity",0).style("stroke-width","0.5mm");
 // console.log(circle.transform());
 var tem = circle.style();
-console.log(typeof circle.style());
+// console.log(typeof circle.style());
+
+
+var currentText = draw.text("aaa").move(100,100);
 
 // baseline | 
 //before-edge | text-before-edge |
@@ -90,25 +102,25 @@ t.move(100,200);
 function changeText(){
 	var v = $("#id-text").textbox("getValue");
 	// alert(v);
-	t.text(v);
+	currentText.text(v);
 }
 
 /**
  * 清空文字
  */ 
 function clearText(){
-	t.clear();
+	currentText.clear();
 }
 /**
  * 变色
  */ 
 function changeColor(){
-	t.style("fill",getRandomColor());
+	currentText.style("fill",getRandomColor());
 }
 
 function changeSize(){
 	var a = Math.floor(Math.random()*100);
-	t.font("size",a);
+	currentText.font("size",a);
 }
 
 /**
