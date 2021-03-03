@@ -42,12 +42,14 @@
 
 -->
 <body>
-	<div style="float:left;margin-right: 50px;">
+	<div style="margin-right: 50px;">
 		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="changeColor()">changeColor</a>
 		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="resetColor()">resetColor</a> 
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"   onclick="clearColor()">clearColor</a> 
+
 	</div>
 	
-	<div style="float:left;">
+	<div style="">
 		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
 		<div id="drawing" style="border:2px solid green;width: 800px;height: 600px;">
 			
@@ -93,6 +95,10 @@ function resetColor(){
 	circle.style(tem);
 }
 
+function clearColor(){
+	circle.attr("style","");
+	console.log(circle.style())
+}
 
 /**
  * 加载图例
