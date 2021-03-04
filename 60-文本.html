@@ -92,9 +92,12 @@ var currentText = draw.text("aaa").move(100,100);
 //before-edge | text-before-edge |
 // middle | central | after-edge |
 // text-after-edge | ideographic | alphabetic | hanging | mathematical | inherit
-var t = draw.text("").plain("aaa");
-t.attr("dominant-baseline","text-before-edge");
-t.move(100,200);
+var t1 = draw.text("").plain("bbb");
+t1.attr("dominant-baseline","text-before-edge");
+t1.move(100,200);
+var t2 = draw.text("").plain("ccc");
+t2.attr("dominant-baseline","text-before-edge");
+t2.move(100,250);
 
 /**
  * 涂改文字
