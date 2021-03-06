@@ -3,40 +3,63 @@
 
 <head>
 	<title>Title</title>
-
+	<script type="text/javascript" src="./svg270/jquery.min.js"></script>
 	<script src="svg270/svg.min.js"></script>
 
 </head>
 <body>
 	<div id="drawing" style="width: 400px;height: 300px;border:1px green solid;">
-		<svg>
-			<rect width="50" height="50" fill="#907"></rect>
-		</svg>
+	
 	</div>
 
-<div id="drawingImport" style="width: 400px;height: 300px;border:1px goldenrod solid;"></div>
+	<div id="drawingImport" style="width: 400px;height: 300px;border:1px goldenrod solid;">
+	</div>
 </body>
 	<!-- 
 https://svgjs.com/docs/2.7/importing-exporting/
 	-->
 <script >
 /**
- * 测试发现
+ * 测试目标：将 之前的svg内容保存，然后在重新导入网页，进行二次编辑。再导出，如此反复（这是绘图的核心场景）
 
  */
 var draw = SVG('drawing');
+//为svg 添加个id，便于使用 id选择器
+draw.attr("id","drawingsvg");
 var rect = draw.rect(100, 100);
 var rect2 = draw.rect(100, 100).move(100,100);
 
 
 /**
- * 导出函数不受干扰
+ * 导出后的 svg 的全部内容
  */ 
+// console.log(draw.svg());
+var exportSvgString = draw.svg();
 
-console.log(draw.svg());
+//必须移除以前的，不然 id 选择器会有问题
+draw.remove();
 
+/**
+ * 这是目前找到可以嵌入已经整体svg 的方式
+ */
+/**
+ * 唯一的缺点就是：多出了 xmlns:svgjs="http://svgjs.com/svgjs
+ * 所以如果是反复导出，又导入，就会出现很多 上面的namespace
+ * 多余的 namespace 会导致 svg文件无法被浏览器直接打开
+ */ 
+var reg = new RegExp(`xmlns:svgjs="http://svgjs.com/svgjs"`, "g");
+var exportSvgString = exportSvgString.replace(reg, ``);
+// console.log(importSvgString);
+$("#drawingImport").append(exportSvgString);
 
-
-
+// // 第2步 使用 svg.get(ID) 函数获取 svg对象
+var draw2 = SVG.get("drawingsvg");
+var rect2 = draw2.rect(100, 100).move(120,120).fill("#874");
+/**
+ * 唯一的缺点就是：多出了 xmlns:svgjs="http://svgjs.com/svgjs
+ * 所以如果是反复导出，又导入，就会出现很多 上面的namespace
+ * 多余的 namespace 会导致 svg文件无法被浏览器直接打开
+ */ 
+console.log(draw2.svg());
 </script>
 </html>
