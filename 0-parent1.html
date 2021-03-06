@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+
+	<script src="svg270/svg.min.js"></script>
+
+</head>
+<body>
+	<div id="drawing" style="border: 5px red solid;background-color: aqua;"></div>
+
+
+</body>
+<!--
+https://svgjs.com/docs/2.7/parents/
+--->
+<script >
+	/**
+	 * <svg></svg> 是无法加入颜色等边框样式的
+	 * 只能通过 div 来加入外框样式
+	 */ 
+	var draw = SVG('drawing')
+
+	//rect 的 fill 默认是黑色填充色 
+	var rect = draw.rect(100, 100);
+
+	
+
+
+	</script>
+</html>

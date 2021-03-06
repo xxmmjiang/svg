@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+
+	<script src="svg270/svg.min.js"></script>
+
+</head>
+<body>
+	<div id="drawing" style="width: 400px;height: 300px;border:1px green solid;">
+		<svg>
+			<rect width="50" height="50" fill="#907"></rect>
+		</svg>
+	</div>
+
+<div id="drawingImport" style="width: 400px;height: 300px;border:1px goldenrod solid;"></div>
+</body>
+	<!-- 
+https://svgjs.com/docs/2.7/importing-exporting/
+	-->
+<script >
+/**
+ * 测试发现
+
+ */
+var draw = SVG('drawing');
+var rect = draw.rect(100, 100);
+var rect2 = draw.rect(100, 100).move(100,100);
+
+
+/**
+ * 导出函数不受干扰
+ */ 
+
+console.log(draw.svg());
+
+
+
+
+</script>
+</html>

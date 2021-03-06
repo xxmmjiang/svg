@@ -11,29 +11,24 @@
 	<script type="text/javascript" src="../../jquery.easyui.min.js"></script>
 	-->
 	<script src="svg270/svg.min.js"></script>
-	<!-- 
-	<script src="svg270/svg.draggable.min.js"></script>
-	<script src="svg270/svg.resize.min.js"></script>
 	
-	<script src="svg270/svg.select.min.css"></script>
-	<script src="svg270/svg.select.min.js"></script>
-	-->
 </head>
 <body>
 	<div id="drawing"></div>
 
 
 </body>
-
+<!-- 
+https://svgjs.com/docs/2.7/events/#basic-events
+	-->
 <script >
-var draw = SVG('drawing').size(800, 800);
+var draw = SVG('drawing').size(800, 800)
 var rect = draw.rect(100, 100);
 var rect2 = draw.rect(100, 100).move(100,100);
 
-bind();
 
-var svg = draw.svg();
-console.log(svg);
+
+bind();
 
 
 var stop = false;

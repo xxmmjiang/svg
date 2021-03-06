@@ -11,20 +11,16 @@
 	<script type="text/javascript" src="../../jquery.easyui.min.js"></script>
 	-->
 	<script src="svg270/svg.min.js"></script>
-	<!-- 
-	<script src="svg270/svg.draggable.min.js"></script>
-	<script src="svg270/svg.resize.min.js"></script>
 	
-	<script src="svg270/svg.select.min.css"></script>
-	<script src="svg270/svg.select.min.js"></script>
-	-->
 </head>
 <body>
 	<div id="drawing"></div>
 
 
 </body>
-
+<!-- 
+https://svgjs.com/docs/2.7/events/#event-listeners
+	-->
 <script >
 var draw = SVG('drawing').size(800, 800)
 var rect = draw.rect(100, 100);

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+
+	<script src="svg270/svg.min.js"></script>
+
+</head>
+<body>
+	<div id="drawing" style="width: 400px;height: 300px;border:1px green solid;">
+		<svg>
+			<rect width="50" height="50" fill="#907"></rect>
+		</svg>
+	</div>
+
+</body>
+	<!-- 
+https://svgjs.com/docs/2.7/importing-exporting/
+	-->
+<script >
+/**
+ * 测试发现
+ * 针对 已经html 中已经存在的 <svg>签，后期通过 svg.js 生成的新的<svg> 是追加的方式。
+ * 并不会删除掉已经存在html 中的svg
+ */
+var draw = SVG('drawing');
+var rect = draw.rect(100, 100);
+var rect2 = draw.rect(100, 100).move(100,100);
+
+var draw2 = SVG('drawing');
+var rect3 = draw2.rect(100, 100).fill("#498");
+var rect4 = draw2.rect(100, 100).fill("#498").move(100,100);
+
+/**
+ * 导出函数不受干扰
+ */ 
+
+console.log(draw.svg());
+console.log(draw2.svg());
+
+
+
+</script>
+</html>

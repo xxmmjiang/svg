@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+
+	<script src="svg270/svg.min.js"></script>
+
+</head>
+<body>
+	<div id="drawing" style="border: 1px red solid;width: 200px;height: 200px;"></div>
+
+
+</body>
+<!--
+https://svgjs.com/docs/2.7/parents/
+--->
+<script >
+	/**
+	 * <svg></svg> 是无法加入颜色等边框样式的
+	 */ 
+	// size 不指定单位，默认为 px
+	//此时 svg width和height 比 div的范围小
+	var draw = SVG('drawing').size("100", "100");
+	//你会发现 其实 rect 只能在 svg的范围内显示，和div无关
+	var rect = draw.rect(100, 100).move(70,10);
+
+	
+
+
+	</script>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+
+	<script src="svg270/svg.min.js"></script>
+
+</head>
+<body>
+	<div id="drawing" style="border: 1px red solid;width: 200px;height: 200px;"></div>
+
+
+</body>
+<!--
+https://svgjs.com/docs/2.7/parents/
+--->
+<script >
+	/**
+	 * <svg></svg> 是无法加入颜色等边框样式的
+	 */ 
+	// 此时设置 size 为div 的100%适配，故尺寸和div一致。
+	var draw = SVG('drawing').size("100%", "100%");
+	var rect = draw.rect(100, 100);
+	//超出范围的部分无法显示
+	var rect2 = draw.rect(100, 100).move(150,150).fill("#f44");
+	
+
+
+	</script>
+</html>

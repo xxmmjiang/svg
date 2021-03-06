@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+
+<head>
+	<title>Title</title>
+	
+	<script src="svg270/svg.min.js"></script>
+
+</head>
+<body>
+	<div id="drawing"></div>
+
+
+</body>
+<!--
+	针对动画、动画监听事件的测试
+	参考 https://svgjs.com/docs/2.7/elements/
+	-->
+<script >
+	var draw = SVG('drawing').size(800, 800)
+	var rect = draw.rect(100, 100);
+
+	rect.animate(3000).move(100, 100).after(function(situation) {
+		this.animate().attr({ fill: '#f06' })
+	})
+
+	// or
+	// rect.animate(6000).move(200, 100).afterAll(function() {
+	// 	this.animate().attr({ fill: '#0f6' })
+	// })
+	</script>
+</html>

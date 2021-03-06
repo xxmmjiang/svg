@@ -3,28 +3,19 @@
 
 <head>
 	<title>Title</title>
-	<!--
-	<link rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
-	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
-	<link rel="stylesheet" type="text/css" href="../demo.css">
-	<script type="text/javascript" src="../../jquery.min.js"></script>
-	<script type="text/javascript" src="../../jquery.easyui.min.js"></script>
-	-->
+
 	<script src="svg270/svg.min.js"></script>
-	<!-- 
-	<script src="svg270/svg.draggable.min.js"></script>
-	<script src="svg270/svg.resize.min.js"></script>
-	
-	<script src="svg270/svg.select.min.css"></script>
-	<script src="svg270/svg.select.min.js"></script>
-	-->
+
 </head>
 <body>
 	<div id="drawing"></div>
 
 
 </body>
-
+<!--
+ svg.js 绘图的基本语法进行测试
+ https://svgjs.com/docs/2.7/elements/
+--->
 <script >
 	var draw = SVG('drawing').size(800, 800)
 	var rect = draw.rect(100, 100).attr({ fill: '#f06' });

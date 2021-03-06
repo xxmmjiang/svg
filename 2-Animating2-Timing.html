@@ -4,39 +4,29 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Title</title>
-	<!--
-	<link rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
-	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
-	<link rel="stylesheet" type="text/css" href="../demo.css">
-	<script type="text/javascript" src="../../jquery.min.js"></script>
-	<script type="text/javascript" src="../../jquery.easyui.min.js"></script>
-	-->
+
 	<script src="svg270/svg.min.js"></script>
-	<!-- 
-	<script src="svg270/svg.draggable.min.js"></script>
-	<script src="svg270/svg.resize.min.js"></script>
 	
-	<script src="svg270/svg.select.min.css"></script>
-	<script src="svg270/svg.select.min.js"></script>
-	-->
 </head>
 <body>
 	<div id="drawing"></div>
 
 
 </body>
-
+<!-- 
+	参考 https://svgjs.com/docs/2.7/animating/#animate
+	-->
 <script >
 	var draw = SVG('drawing')
-	//draw.size(800, 800);
-	//var rect = draw.rect(100, 100);
+	draw.size(800, 800);
+	var rect = draw.rect(100, 100);
 
 	// rect.animate({ ease: '<', delay: '1.5s' }).attr({ fill: '#f03' }).delay(500).animate().dmove(50,50);
 
 	// rect.animate(3000).move(100, 100).loop(3);
 	// rect.animate(3000).move(100, 100).loop(3, true);
 
-	// the 0.5 is handled as uneased value (you can omit the false)
+	// //the 0.5 is handled as uneased value (you can omit the false)
 	// rect.animate(3000).move(100, 100).once(0.1, function(pos, eased) {
 	// // do something
 	// 	alert(111);
@@ -57,6 +47,10 @@
 
 	//}).animate().dmove(50,50);
 
+
+	rect.animate().move(200, 200)
+	rect.mouseover(function() { this.pause() })
+	rect.mouseout(function() { this.play() })
 
 	</script>
 </html>
