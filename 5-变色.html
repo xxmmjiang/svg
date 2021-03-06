@@ -75,7 +75,7 @@ draw.panZoom({zoomMin: 0.1, zoomMax: 10,zoomFactor:0.1});
 
 
 
-//创建虚线线型 这是 仪表线的 线型
+//创建虚线线型 这是 参考的线
 //参考 https://www.runoob.com/svg/svg-stroke.html
 draw.line(0, 0, 100, 150).stroke({ width: "0.5mm" }).attr("stroke-dasharray","10,10");
 
@@ -94,7 +94,9 @@ function changeColor(){
 function resetColor(){
 	circle.style(tem);
 }
-
+/**
+ * 必须通过此种方式才能清除样式
+ */ 
 function clearColor(){
 	circle.attr("style","");
 	console.log(circle.style())

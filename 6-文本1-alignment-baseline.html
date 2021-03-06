@@ -35,21 +35,21 @@
 </style>
 
 <!-- 
-
+	神奇的文字签，文字位置居然默认不是左上角的点
+https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/alignment-baseline
+alignment-baseline 取值：
+auto | baseline | before-edge | text-before-edge | middle 
+| central | after-edge | text-after-edge | ideographic 
+| alphabetic | hanging | mathematical | inherit
 -->
 <body>
 
 
 
-		<svg width="300" height="300" viewBox="0 0 300 120"
+		<svg width="400" height="400" viewBox="0 0 400 400"
 			 xmlns="http://www.w3.org/2000/svg" version="1.1">
 
-			<!-- Materialisation of anchors -->
-			<path d="M60,10 L60,110
-					 M30,10 L300,10
-					 M30,60 L300,60
-					 M30,110 L300,110
-					 " stroke="grey" />
+			
 
 			<!-- Anchors in action -->
 			
@@ -58,19 +58,31 @@
 				  x="60" y="10">A hanging</text>
 
 			<!-- middle -->
-			<text alignment-baseline="before-edge"
+			<text alignment-baseline="middle"
 				  x="60" y="60">A middle</text>
 			<!-- baseline -->
-			<text alignment-baseline="before-edge"
+			<text alignment-baseline="baseline"
 				  x="60" y="110">A baseline</text>
+			<!-- before-edge -->
+			<text alignment-baseline="before-edge"
+				x="60" y="160">A before-edge</text>
 			<!--啥也没写--->
-			<text  x="60" y="160">A aaa</text>
+			<text  x="60" y="210">A aaa</text>
 
-			<!-- Materialisation of anchors -->
+
+			<!--   参考线 -->
+			<line x1="60" y1="10" x2="400" y2="10" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+			<line x1="60" y1="60" x2="400" y2="60" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+			<line x1="60" y1="110" x2="400" y2="110" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+			<line x1="60" y1="160" x2="400" y2="160" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+			<line x1="60" y1="210" x2="400" y2="210" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+
+			<!--   参考点 -->
 			<circle cx="60" cy="10" r="3" fill="red" />
 			<circle cx="60" cy="60" r="3" fill="red" />
 			<circle cx="60" cy="110" r="3" fill="red" />
 			<circle cx="60" cy="160" r="3" fill="red" />
+			<circle cx="60" cy="210" r="3" fill="red" />
 		<style><![CDATA[
 		text{
 			font: bold 36px Verdana, Helvetica, Arial, sans-serif;
@@ -86,33 +98,6 @@
 <script>
 
 
-
-/**
- * 涂改文字
- */
-function changeText(){
-	var v = $("#id-text").textbox("getValue");
-	// alert(v);
-	t.text(v);
-}
-
-/**
- * 清空文字
- */ 
-function clearText(){
-	t.clear();
-}
-/**
- * 变色
- */ 
-function changeColor(){
-	t.style("fill",getRandomColor());
-}
-
-function changeSize(){
-	var a = Math.floor(Math.random()*100);
-	t.font("size",a);
-}
 
 /**
  * 加载图例

@@ -43,33 +43,36 @@
 		<svg width="300" height="300" viewBox="0 0 300 120"
 			 xmlns="http://www.w3.org/2000/svg" version="1.1">
 
-			<!-- Materialisation of anchors -->
-			<path d="M60,10 L60,110
-					 M30,10 L300,10
-					 M30,60 L300,60
-					 M30,110 L300,110
-					 " stroke="grey" />
 
-			<!-- Anchors in action -->
+
+			<!--放三排文字 
+				是定位的坐标 和其他图形一样，都位于左上角
+			-->
 			
-			<!-- hanging -->
-			<text dominant-baseline ="text-before-edge" 
-				  x="60" y="10">A hanging</text>
 
-			<!-- middle -->
+			<text dominant-baseline ="text-before-edge" alignment-baseline="before-edge"
+				  x="60" y="10">我是个测试文字 up</text>
+
 			<text dominant-baseline ="text-before-edge" alignment-baseline="before-edge"
 				  x="60" y="60"></text>
-			<!-- baseline -->
+
 			<text dominant-baseline ="text-before-edge" alignment-baseline="before-edge"
-				  x="60" y="110">A baseline</text>
-			<!--啥也没写--->
+				  x="60" y="110">我是个测试文字 down</text>
+			<!--这个是对比--->
 			<text  x="60" y="160">A aaa</text>
 
-			<!-- Materialisation of anchors -->
+			<!--   参考线 -->
+			<line x1="60" y1="10" x2="400" y2="10" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+			<line x1="60" y1="60" x2="400" y2="60" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+			<line x1="60" y1="110" x2="400" y2="110" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+			<line x1="60" y1="160" x2="400" y2="160" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+			<!--   参考点 -->
 			<circle cx="60" cy="10" r="3" fill="red" />
 			<circle cx="60" cy="60" r="3" fill="red" />
 			<circle cx="60" cy="110" r="3" fill="red" />
 			<circle cx="60" cy="160" r="3" fill="red" />
+	
+		<style><![CDATA[
 		<style><![CDATA[
 		text{
 			font: bold 36px Verdana, Helvetica, Arial, sans-serif;
