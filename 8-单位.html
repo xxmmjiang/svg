@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li {
+		margin-bottom: 20px;
+		cursor: pointer;
+	}
+
+	/*高亮效果*/
+	.highlight {
+		stroke: #1470FA;
+	}
+
+	div {
+		margin-top: 10px;
+	}
+</style>
+
+<!-- 
+
+-->
+
+<body>
+	
+	<div>
+		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
+	
+		<div id="drawing" style="border:2px solid green;width: 800px;height: 600px;">
+		</div>
+	</div>
+
+
+
+</body>
+
+<script>
+
+	var draw = SVG('drawing').size("100%", "100%");
+
+	//有效	且位于  stroke-width 属性内
+	draw.line(0, 20, 100, 20).stroke({ width: "1mm" })
+	
+	//有效，必须同时设置  stroke-width  stroke 才生效，且位于 style 属性内
+	draw.line(0, 50, 100, 50).style({
+		"stroke-width":"1mm",
+		// "stroke":"#f45"
+	})
+	//有效， style 属性比 单独的 stroke-width 优先级高
+	draw.line(0, 70, 100, 70).stroke({ width: "2mm" }).style({"stroke-width":"1mm",
+		"stroke":"#f49"
+	})
+	
+	//有效，必须同时设置  stroke-width  stroke 才生效，且位于 style 属性内
+	draw.line(0, 100, 100, 100).style("stroke-width","2mm").style("stroke","#f45")
+
+
+
+
+
+
+
+
+
+	/**
+	 * 加载图例
+	 */
+	function loadLegendByUrl(url, callback) {
+
+
+		$.post(url, {}, function (data) {
+
+			if ($.isFunction(callback)) {
+				callback(data);
+			}
+		}, "text");
+	}
+
+	function createUUID() {
+		var x = 13 * Math.floor(Math.random() * 1000) + "-" + 7 * Math.floor(Math.random() * 100);
+		return "id_" + x;
+	}
+	/**
+	 * 生成随机颜色
+	 */
+	function getRandomColor() {
+		var x = getRandomInteger();
+		return "#" + x;
+	}
+	/**
+	 * 生成随机数
+	 */
+	function getRandomInteger() {
+		var x = Math.floor(Math.random() * 9) + "" + Math.floor(Math.random() * 9) + "" + Math.floor(Math.random() * 9);
+		return x;
+	}
+</script>
+
+</html>
