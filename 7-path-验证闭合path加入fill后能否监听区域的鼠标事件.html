@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li {
+		margin-bottom: 20px;
+		cursor: pointer;
+	}
+
+	/*高亮效果*/
+	.highlight {
+		stroke: #1470FA;
+	}
+
+	div {
+		margin-top: 10px;
+	}
+</style>
+
+<!-- 
+
+-->
+
+<body>
+	
+	<div>
+		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
+		<svg width="400px" height="300px">
+
+			<!-- //闭合 path
+			<path 
+			style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+			d="M 46.113094,34.017857 127,32.505951 130.02381,107.34524 46.869048,160.2619 20.410714,91.470238 56.696427,92.22619 95.249999,61.988093 49.136905,55.184523 Z"
+			id="path10" /> -->
+
+			<!-- //非闭合 path -->
+			 <path
+				style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+				d="m 40.065475,75.595238 86.178575,-43.089287 7.55952,78.619049 9.82738,61.23214 40.82143,-47.625 6.80357,68.03572 L 95.249999,213.93452 55.184523,151.94643 103.56547,127 96.00595,83.15476 33.261905,121.70833 12.85119,113.39286 45.357142,231.32142 112.6369,246.44047"
+				id="path18" />
+
+
+			<!-- // 多个闭合区域合并
+			 <path
+				style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+				d="M 60.47619,68.035714 161.01786,59.720238 166.30952,213.17857 52.160714,204.10714 Z"
+				id="path22" />
+				<path
+				style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+				d="M 60.47619,68.035714 58.964284,42.333333 c 0,0 48.380956,-6.047618 49.136906,21.922618 24.19048,-22.67857 52.91667,-4.535713 52.91667,-4.535713"
+				id="path24" />	 -->
+		</svg> 
+			
+			
+		
+		<div id="drawing" style="border:2px solid green;width: 800px;height: 600px;">
+		</div>
+	</div>
+
+
+
+</body>
+
+<script>
+
+	var draw = SVG('drawing').size("100%", "100%");
+
+	/**
+	 * 闭合区域
+	 */ 
+	var closed4Path = draw.path("M 46.113094,34.017857 127,32.505951 130.02381,107.34524 46.869048,160.2619 20.410714,91.470238 56.696427,92.22619 95.249999,61.988093 49.136905,55.184523 Z")
+
+	/**
+	 * 闭合曲线可以绑定鼠标事件
+	 */ 
+	 closed4Path.fill("#f98").mousemove(function(e2){
+		var x = e2.clientX;
+		var y = e2.clientY;
+		console.log(x+"#"+y);
+	})
+
+
+
+
+	/**
+	 * 非闭合区域
+	 */ 
+	 var unclosed4Path = draw.path("m 40.065475,75.595238 86.178575,-43.089287 7.55952,78.619049 9.82738,61.23214 40.82143,-47.625 6.80357,68.03572 L 95.249999,213.93452 55.184523,151.94643 103.56547,127 96.00595,83.15476 33.261905,121.70833 12.85119,113.39286 45.357142,231.32142 112.6369,246.44047")
+	 unclosed4Path.move(100,100)
+	/**
+	 * 非闭合曲线可以绑定鼠标事件
+	 */ 
+	 unclosed4Path.fill("#f08").mousemove(function(e2){
+		var x = e2.clientX;
+		var y = e2.clientY;
+		console.log(x+"#"+y);
+	})
+
+
+	// 多个闭合区域
+	var path1 = draw.path("M 60.47619,68.035714 161.01786,59.720238 166.30952,213.17857 52.160714,204.10714 Z")
+	var path2 = draw.path("M 60.47619,68.035714 58.964284,42.333333 c 0,0 48.380956,-6.047618 49.136906,21.922618 24.19048,-22.67857 52.91667,-4.535713 52.91667,-4.535713")
+
+	path1.move(300,200);
+	path2.move(300,200);
+	/**
+	 * 上层的区域自动屏蔽下层的事件
+	 */ 
+	 path1.fill("#904").style("fill-opacty",0).mousemove(function(e2){
+		var x = e2.clientX;
+		var y = e2.clientY;
+		console.log(x+"#"+y);
+	})
+
+
+
+
+
+
+
+
+	/**
+	 * 加载图例
+	 */
+	function loadLegendByUrl(url, callback) {
+
+
+		$.post(url, {}, function (data) {
+
+			if ($.isFunction(callback)) {
+				callback(data);
+			}
+		}, "text");
+	}
+
+	function createUUID() {
+		var x = 13 * Math.floor(Math.random() * 1000) + "-" + 7 * Math.floor(Math.random() * 100);
+		return "id_" + x;
+	}
+	/**
+	 * 生成随机颜色
+	 */
+	function getRandomColor() {
+		var x = getRandomInteger();
+		return "#" + x;
+	}
+	/**
+	 * 生成随机数
+	 */
+	function getRandomInteger() {
+		var x = Math.floor(Math.random() * 9) + "" + Math.floor(Math.random() * 9) + "" + Math.floor(Math.random() * 9);
+		return x;
+	}
+</script>
+
+</html>
