@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+
+	<link rel="stylesheet" type="text/css" href="svg270/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="svg270/themes/icon.css">
+	<script type="text/javascript" src="svg270/jquery.min.js"></script>
+	<script type="text/javascript" src="svg270/jquery.easyui.min.js"></script>
+
+
+	<script src="svg270/svg.min.js"></script>
+
+	<script src="svg270/svg.panzoom.js"></script>
+	<script src="svg270/svg.draggable.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="svg270/svg.select.css">
+	<script src="svg270/svg.select.js"></script>
+	<script src="svg270/svg.resize.js"></script>
+
+</head>
+<style>
+	ul li {
+		margin-bottom: 20px;
+		cursor: pointer;
+	}
+
+	/*高亮效果*/
+	.highlight {
+		stroke: #1470FA;
+	}
+
+	div {
+		margin-top: 10px;
+	}
+</style>
+
+<!-- 
+
+-->
+
+<body>
+	
+	<div>
+		<div style="border-bottom: 1px solid gray;">我是一个画布视窗</div>
+	
+		<div id="drawing" style="border:2px solid green;width: 800px;height: 600px;">
+		</div>
+	</div>
+
+
+
+</body>
+
+<script>
+
+	loadLegendByUrl("svg270/legend9/1.svg",function(graphicalContent){
+		
+		/**
+         * 加载已有图纸
+         * 第1步：加载已有图纸的完整串
+         */
+        // 由于 总是会多出一个如下的 namespace，保存后的html会出现2个相同的namespace 无法打开。必须提前去掉。
+        //比较诡异的事，必须F12 编辑节点属性才能看到多出来的东西，不然看不出来。
+        var reg = new RegExp(`xmlns:svgjs="http://svgjs.com/svgjs"`, "g");
+        graphicalContent = graphicalContent.replace(reg, ``);
+        // console.log(graphicalContent);
+        $("#drawing").append(graphicalContent);
+
+        //第2步 使用 svg.get(ID) 函数获取 svg对象	
+        var draw = SVG.get("demo");
+		var handle = SVG.get("43d0ee36-7c41-4f1e-afef-22afc519d6a0");
+		/*
+		背景：通过 svgObject.data("itemId"),在签中体现为 data-itemid (注意是属性变为小写)
+			该demo，验证当图纸被二次加载后，里面的曾经的data是否还能被读取出来。
+		*/
+		
+		
+		var itemId1 = handle.data("itemId");
+		var itemId2 = handle.data("data-itemId");
+		var itemId3 = handle.attr("data-itemid");
+		console.log(itemId1);//undefined
+		console.log(itemId2);//undefined
+		console.log(itemId3);//ok 有值
+		
+		/*建议在图纸上存储值用 attr ,不要用data函数*/
+		
+	})
+
+		
+
+
+	/**
+	 * 加载图例
+	 */
+	function loadLegendByUrl(url, callback) {
+
+
+		$.post(url, {}, function (data) {
+
+			if ($.isFunction(callback)) {
+				callback(data);
+			}
+		}, "text");
+	}
+
+	function createUUID() {
+		var x = 13 * Math.floor(Math.random() * 1000) + "-" + 7 * Math.floor(Math.random() * 100);
+		return "id_" + x;
+	}
+	/**
+	 * 生成随机颜色
+	 */
+	function getRandomColor() {
+		var x = getRandomInteger();
+		return "#" + x;
+	}
+	/**
+	 * 生成随机数
+	 */
+	function getRandomInteger() {
+		var x = Math.floor(Math.random() * 9) + "" + Math.floor(Math.random() * 9) + "" + Math.floor(Math.random() * 9);
+		return x;
+	}
+</script>
+
+</html>
